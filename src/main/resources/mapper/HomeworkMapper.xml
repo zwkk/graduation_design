@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="graduation.design.dao.HomeworkMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="graduation.design.entity.Homework">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="begin" property="begin" />
+        <result column="end" property="end" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, begin, end
+    </sql>
+
+</mapper>

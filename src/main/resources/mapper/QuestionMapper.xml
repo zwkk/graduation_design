@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="graduation.design.dao.QuestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="graduation.design.entity.Question">
+        <id column="id" property="id" />
+        <result column="student_id" property="studentId" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="time" property="time" />
+        <result column="answer" property="answer" />
+        <result column="solution" property="solution" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, student_id, title, content, time, answer, solution
+    </sql>
+
+</mapper>

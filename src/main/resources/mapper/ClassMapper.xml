@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="graduation.design.dao.ClassMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="graduation.design.entity.Class">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="num" property="num" />
+        <result column="term" property="term" />
+        <result column="teacher1" property="teacher1" />
+        <result column="teacher2" property="teacher2" />
+        <result column="teacher3" property="teacher3" />
+        <result column="assistant1" property="assistant1" />
+        <result column="assistant2" property="assistant2" />
+        <result column="assistant3" property="assistant3" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, num, term, teacher1, teacher2, teacher3, assistant1, assistant2, assistant3
+    </sql>
+
+</mapper>

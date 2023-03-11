@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="graduation.design.dao.StudentPracticeAnswerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="graduation.design.entity.StudentPracticeAnswer">
+        <id column="id" property="id" />
+        <result column="practice_id" property="practiceId" />
+        <result column="problem_id" property="problemId" />
+        <result column="student_id" property="studentId" />
+        <result column="answer" property="answer" />
+        <result column="score" property="score" />
+        <result column="if_answer" property="ifAnswer" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, practice_id, problem_id, student_id, answer, score, if_answer
+    </sql>
+
+</mapper>
