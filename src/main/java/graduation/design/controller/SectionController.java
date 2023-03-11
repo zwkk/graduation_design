@@ -57,6 +57,7 @@ public class SectionController {
     @ApiOperation("修改节")
     @PostMapping("/changeSection")
     public Result changeSection(@RequestBody Section section){
+        //作者权限校验
         if(sectionService.getById(section.getId())==null){
             return Result.fail("该章不存在");
         }
