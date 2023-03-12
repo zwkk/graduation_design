@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author zwk
- * @since 2023年03月09日
+ * @since 2023年03月12日
  */
 public interface NoticeService extends IService<Notice> {
 

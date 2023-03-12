@@ -7,14 +7,12 @@
         <id column="id" property="id" />
         <result column="num" property="num" />
         <result column="title" property="title" />
-        <result column="version" property="version" />
         <result column="chapter_num" property="chapterNum" />
-        <result column="content" property="content" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, num, title, version, chapter_num, content
+        id, num, title, chapter_num
     </sql>
 
 </mapper>

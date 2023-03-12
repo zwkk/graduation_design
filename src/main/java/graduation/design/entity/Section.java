@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zwk
- * @since 2023年03月09日
+ * @since 2023年03月12日
  */
 @Getter
 @Setter
@@ -40,17 +40,9 @@ public class Section implements Serializable {
     @TableField("title")
     private String title;
 
-    @ApiModelProperty("版本")
-    @TableField("version")
-    private String version;
-
     @ApiModelProperty("所属章")
     @TableField("chapter_num")
     private Integer chapterNum;
-
-    @ApiModelProperty("内容")
-    @TableField("content")
-    private String content;
 
 
 }

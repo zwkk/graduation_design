@@ -3,12 +3,9 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.entity.Author;
 import graduation.design.entity.AuthorSection;
-import graduation.design.entity.Chapter;
-import graduation.design.entity.Section;
 import graduation.design.service.AuthorSectionService;
 import graduation.design.service.AuthorService;
 import graduation.design.service.SectionService;
-import graduation.design.vo.AuthorSectionVo;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,25 +54,15 @@ public class AuthorSectionController {
         return Result.success("删除权限成功");
     }
 
-    @ApiOperation(value = "查询作者编辑权限列表",response = AuthorSectionVo.class)
+    @ApiOperation(value = "查询某一节可编辑作者列表",response = Author.class)
     @GetMapping("/queryEdit")
-    public Result queryEdit(){
-        List<Section> sections = sectionService.list();
-        List<AuthorSectionVo> authorSectionVoList = new ArrayList<>();
-        for (Section section : sections) {
-            AuthorSectionVo authorSectionVo = new AuthorSectionVo();
-            authorSectionVo.setVersion(section.getVersion());
-            authorSectionVo.setChapterNum(section.getChapterNum());
-            authorSectionVo.setSectionNum(section.getNum());
-            List<AuthorSection> authorSections = authorSectionService.list(new QueryWrapper<AuthorSection>().eq("section_id", section.getId()));
-            List<Author> authors = new ArrayList<>();
-            for (AuthorSection authorSection : authorSections) {
-                authors.add(authorService.getById(authorSection.getAuthorId()));
-            }
-            authorSectionVo.setAuthors(authors);
-            authorSectionVoList.add(authorSectionVo);
+    public Result queryEdit(Integer sectionId){
+        List<AuthorSection> authorSections = authorSectionService.list(new QueryWrapper<AuthorSection>().eq("section_id", sectionId));
+        List<Author> authors = new ArrayList<>();
+        for (AuthorSection authorSection : authorSections) {
+            authors.add(authorService.getById(authorSection.getAuthorId()).setPassword(null));
         }
-        return Result.success(authorSectionVoList);
+        return Result.success(authors);
     }
 
 }

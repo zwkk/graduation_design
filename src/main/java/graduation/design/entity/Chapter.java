@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zwk
- * @since 2023年03月09日
+ * @since 2023年03月12日
  */
 @Getter
 @Setter
@@ -39,10 +39,6 @@ public class Chapter implements Serializable {
     @ApiModelProperty("标题")
     @TableField("title")
     private String title;
-
-    @ApiModelProperty("版本")
-    @TableField("version")
-    private String version;
 
 
 }
