@@ -3,6 +3,7 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.entity.Author;
 import graduation.design.entity.AuthorSection;
+import graduation.design.entity.Section;
 import graduation.design.service.AuthorSectionService;
 import graduation.design.service.AuthorService;
 import graduation.design.service.SectionService;
@@ -63,6 +64,17 @@ public class AuthorSectionController {
             authors.add(authorService.getById(authorSection.getAuthorId()).setPassword(null));
         }
         return Result.success(authors);
+    }
+
+    @ApiOperation(value = "查询某作者可编辑节列表",response = Section.class)
+    @GetMapping("/authorEdit")
+    public Result authorEdit(Integer authorId){
+        List<AuthorSection> authorSections = authorSectionService.list(new QueryWrapper<AuthorSection>().eq("author_id", authorId));
+        List<Section> sections = new ArrayList<>();
+        for (AuthorSection authorSection : authorSections) {
+            sections.add(sectionService.getById(authorSection.getSectionId()));
+        }
+        return Result.success(sections);
     }
 
 }

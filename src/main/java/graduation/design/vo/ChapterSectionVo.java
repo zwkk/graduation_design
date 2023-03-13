@@ -15,9 +15,6 @@ public class ChapterSectionVo {
     @ApiModelProperty("章id")
     private Integer id;
 
-    @ApiModelProperty("章数")
-    private Integer chapterNum;
-
     @ApiModelProperty("标题")
     @TableField("title")
     private String title;

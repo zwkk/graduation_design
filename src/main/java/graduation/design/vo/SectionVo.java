@@ -9,9 +9,9 @@ import lombok.Data;
 @ApiModel(description = "节详细内容")
 public class SectionVo {
 
-    @ApiModelProperty("节数")
-    @TableField("num")
-    private Integer num;
+    @ApiModelProperty("节id")
+    @TableField("id")
+    private Integer id;
 
     @ApiModelProperty("标题")
     @TableField("title")

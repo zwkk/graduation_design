@@ -5,14 +5,13 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="graduation.design.entity.Section">
         <id column="id" property="id" />
-        <result column="num" property="num" />
         <result column="title" property="title" />
-        <result column="chapter_num" property="chapterNum" />
+        <result column="chapter_id" property="chapterId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, num, title, chapter_num
+        id, title, chapter_id
     </sql>
 
 </mapper>

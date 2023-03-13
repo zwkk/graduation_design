@@ -32,17 +32,13 @@ public class Section implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("节数")
-    @TableField("num")
-    private Integer num;
-
     @ApiModelProperty("标题")
     @TableField("title")
     private String title;
 
-    @ApiModelProperty("所属章")
-    @TableField("chapter_num")
-    private Integer chapterNum;
+    @ApiModelProperty("所属章id")
+    @TableField("chapter_id")
+    private Integer chapterId;
 
 
 }

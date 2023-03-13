@@ -47,10 +47,7 @@ public class SectionController {
     @PostMapping("/addSection")
     public Result addSection(@RequestBody Section section){
         section.setId(null);
-        if(sectionService.getOne(new QueryWrapper<Section>().eq("num",section.getNum()).eq("chapter_num",section.getChapterNum()))!=null){
-            return Result.fail("该节已存在");
-        }
-        if(chapterService.getOne(new QueryWrapper<Chapter>().eq("num",section.getChapterNum()))==null) return Result.fail("该章不存在");
+        if(chapterService.getOne(new QueryWrapper<Chapter>().eq("id",section.getChapterId()))==null) return Result.fail("该章不存在");
         sectionService.save(section);
         return Result.success(null);
     }
@@ -89,7 +86,7 @@ public class SectionController {
         SectionVo sectionVo = new SectionVo();
         sectionVo.setContent(detail.getContent());
         sectionVo.setVersion(detail.getVersion());
-        sectionVo.setNum(sectionService.getById(sectionId).getNum());
+        sectionVo.setId(sectionService.getById(sectionId).getId());
         sectionVo.setTitle(sectionService.getById(sectionId).getTitle());
         return Result.success(sectionVo);
     }
@@ -101,7 +98,7 @@ public class SectionController {
         SectionVo sectionVo = new SectionVo();
         sectionVo.setContent(detail.getContent());
         sectionVo.setVersion(detail.getVersion());
-        sectionVo.setNum(sectionService.getById(sectionId).getNum());
+        sectionVo.setId(sectionService.getById(sectionId).getId());
         sectionVo.setTitle(sectionService.getById(sectionId).getTitle());
         return Result.success(sectionVo);
     }
@@ -114,7 +111,7 @@ public class SectionController {
         }
         SectionDetail sectionDetail = new SectionDetail();
         sectionDetail.setSectionId(sectionId).setContent(content).setAuthorId(authorId);
-        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().orderByDesc("version").last("limit 1"));
+        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id",sectionId).orderByDesc("version").last("limit 1"));
         if(detail==null) {
             sectionDetail.setVersion("1");
         }else {

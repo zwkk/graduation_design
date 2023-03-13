@@ -36,9 +36,6 @@ public class ChapterController {
     @PostMapping("/addChapter")
     public Result addChapter(@RequestBody Chapter chapter){
         chapter.setId(null);
-        if(chapterService.getOne(new QueryWrapper<Chapter>().eq("num",chapter.getNum()))!=null){
-            return Result.fail("该章已存在");
-        }
         chapterService.save(chapter);
         return Result.success(null);
     }
@@ -49,6 +46,7 @@ public class ChapterController {
         if(chapterService.getById(id)==null){
             return Result.fail("该章不存在");
         }
+        sectionService.remove(new QueryWrapper<Section>().eq("chapter_id",id));
         chapterService.removeById(id);
         return Result.success(null);
     }
@@ -71,9 +69,8 @@ public class ChapterController {
         for (Chapter chapter : chapterList) {
             ChapterSectionVo chapterSectionVo = new ChapterSectionVo();
             chapterSectionVo.setId(chapter.getId());
-            chapterSectionVo.setChapterNum(chapter.getNum());
             chapterSectionVo.setTitle(chapter.getTitle());
-            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_num",chapter.getNum()));
+            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()));
             chapterSectionVo.setSectionList(sectionList);
             chapterSectionVoList.add(chapterSectionVo);
         }

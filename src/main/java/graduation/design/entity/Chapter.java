@@ -32,10 +32,6 @@ public class Chapter implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("章数")
-    @TableField("num")
-    private Integer num;
-
     @ApiModelProperty("标题")
     @TableField("title")
     private String title;
