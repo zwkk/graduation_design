@@ -12,6 +12,9 @@ import java.util.List;
 @ApiModel(description = "章节目录列表")
 public class ChapterSectionVo {
 
+    @ApiModelProperty("章id")
+    private Integer id;
+
     @ApiModelProperty("章数")
     private Integer chapterNum;
 

@@ -70,6 +70,7 @@ public class ChapterController {
         List<Chapter> chapterList = chapterService.list();
         for (Chapter chapter : chapterList) {
             ChapterSectionVo chapterSectionVo = new ChapterSectionVo();
+            chapterSectionVo.setId(chapter.getId());
             chapterSectionVo.setChapterNum(chapter.getNum());
             chapterSectionVo.setTitle(chapter.getTitle());
             List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_num",chapter.getNum()));
