@@ -3,11 +3,16 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.entity.Author;
 import graduation.design.entity.AuthorSection;
+import graduation.design.entity.Chapter;
 import graduation.design.entity.Section;
 import graduation.design.service.AuthorSectionService;
 import graduation.design.service.AuthorService;
+import graduation.design.service.ChapterService;
 import graduation.design.service.SectionService;
+import graduation.design.vo.EditVo;
 import graduation.design.vo.Result;
+import graduation.design.vo.SectionEditVo;
+import graduation.design.vo.SectionVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +41,9 @@ public class AuthorSectionController {
     @Autowired
     SectionService sectionService;
 
+    @Autowired
+    ChapterService chapterService;
+
     @ApiOperation("新增作者编辑权限")
     @GetMapping("/addEdit")
     public Result addEdit(Integer authorId,Integer sectionId){
@@ -56,8 +64,8 @@ public class AuthorSectionController {
     }
 
     @ApiOperation(value = "查询某一节可编辑作者列表",response = Author.class)
-    @GetMapping("/queryEdit")
-    public Result queryEdit(Integer sectionId){
+    @GetMapping("/sectionEdit")
+    public Result sectionEdit(Integer sectionId){
         List<AuthorSection> authorSections = authorSectionService.list(new QueryWrapper<AuthorSection>().eq("section_id", sectionId));
         List<Author> authors = new ArrayList<>();
         for (AuthorSection authorSection : authorSections) {
@@ -75,6 +83,35 @@ public class AuthorSectionController {
             sections.add(sectionService.getById(authorSection.getSectionId()));
         }
         return Result.success(sections);
+    }
+
+    @ApiOperation(value = "查询所有节可编辑作者列表",response = EditVo.class)
+    @GetMapping("/edit")
+    public Result edit(){
+        List<EditVo> editVoList = new ArrayList<>();
+        List<Chapter> chapterList = chapterService.list();
+        for (Chapter chapter : chapterList) {
+            EditVo editVo = new EditVo();
+            editVo.setChapterId(chapter.getId());
+            editVo.setTitle(chapter.getTitle());
+            List<SectionEditVo> sectionEditVoList = new ArrayList<>();
+            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()));
+            for (Section section : sectionList) {
+                SectionEditVo sectionEditVo = new SectionEditVo();
+                sectionEditVo.setSectionId(section.getId());
+                sectionEditVo.setTitle(section.getTitle());
+                List<AuthorSection> authorSections = authorSectionService.list(new QueryWrapper<AuthorSection>().eq("section_id", section.getId()));
+                List<Author> authors = new ArrayList<>();
+                for (AuthorSection authorSection : authorSections) {
+                    authors.add(authorService.getById(authorSection.getAuthorId()).setPassword(null));
+                }
+                sectionEditVo.setAuthors(authors);
+                sectionEditVoList.add(sectionEditVo);
+            }
+            editVo.setSectionEditVoList(sectionEditVoList);
+            editVoList.add(editVo);
+        }
+        return Result.success(editVoList);
     }
 
 }

@@ -10,6 +10,7 @@ import graduation.design.service.ChapterService;
 import graduation.design.service.SectionDetailService;
 import graduation.design.service.SectionService;
 import graduation.design.vo.ChapterSectionVo;
+import graduation.design.vo.ContentVo;
 import graduation.design.vo.Result;
 import graduation.design.vo.SectionVo;
 import io.swagger.annotations.ApiOperation;
@@ -94,24 +95,31 @@ public class SectionController {
     @ApiOperation(value = "根据节查询教材内容,默认最新",response = SectionVo.class)
     @GetMapping ("/queryNewContent")
     public Result queryNewContent(Integer sectionId){
-        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id", sectionId).orderByDesc("version").last("limit 1"));
         SectionVo sectionVo = new SectionVo();
-        sectionVo.setContent(detail.getContent());
-        sectionVo.setVersion(detail.getVersion());
-        sectionVo.setId(sectionService.getById(sectionId).getId());
-        sectionVo.setTitle(sectionService.getById(sectionId).getTitle());
+        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id", sectionId).orderByDesc("version").last("limit 1"));
+        if(detail == null){
+            sectionVo.setId(sectionId);
+            sectionVo.setTitle(sectionService.getById(sectionId).getTitle());
+            sectionVo.setContent(null);
+            sectionVo.setVersion(null);
+        }else {
+            sectionVo.setContent(detail.getContent());
+            sectionVo.setVersion(detail.getVersion());
+            sectionVo.setId(sectionId);
+            sectionVo.setTitle(sectionService.getById(sectionId).getTitle());
+        }
         return Result.success(sectionVo);
     }
 
     @ApiOperation("作者编辑教材")
     @PostMapping ("/editContent")
-    public Result queryNewContent(Integer authorId,Integer sectionId,String content){
-        if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",authorId).eq("section_id",sectionId))==null) {
+    public Result queryNewContent(@RequestBody ContentVo contentVo){
+        if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",contentVo.getAuthorId()).eq("section_id",contentVo.getSectionId()))==null) {
             return Result.fail("无权限编辑");
         }
         SectionDetail sectionDetail = new SectionDetail();
-        sectionDetail.setSectionId(sectionId).setContent(content).setAuthorId(authorId);
-        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id",sectionId).orderByDesc("version").last("limit 1"));
+        sectionDetail.setSectionId(contentVo.getSectionId()).setContent(contentVo.getContent()).setAuthorId(contentVo.getAuthorId());
+        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id",contentVo.getSectionId()).orderByDesc("version").last("limit 1"));
         if(detail==null) {
             sectionDetail.setVersion("1");
         }else {
