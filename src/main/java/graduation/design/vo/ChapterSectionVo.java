@@ -13,6 +13,7 @@ import java.util.List;
 public class ChapterSectionVo {
 
     @ApiModelProperty("章id")
+    @TableField("id")
     private Integer id;
 
     @ApiModelProperty("标题")
