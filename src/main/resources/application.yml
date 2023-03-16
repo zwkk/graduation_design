@@ -10,7 +10,10 @@ spring:
     host: localhost
     port: 6379
   mvc:
+    dispatch-options-request: true
     pathmatch:
-      matching-strategy: ant_path_matcher
+      # Springfox使用的路径匹配是基于AntPathMatcher的，而Spring Boot 2.6.X使用的是PathPatternMatcher
+      # 所以需要配置此参数
+      matching-strategy: ANT_PATH_MATCHER
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**Mapper.xml
