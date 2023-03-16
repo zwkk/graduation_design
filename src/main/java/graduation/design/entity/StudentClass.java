@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 作者表
+ * 学生表
  * </p>
  *
  * @author zwk
@@ -22,9 +23,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("author")
-@ApiModel(value = "Author对象", description = "作者表")
-public class Author implements Serializable {
+@TableName("student")
+@ApiModel(value = "Student对象", description = "学生班级表")
+public class StudentClass implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,21 +33,13 @@ public class Author implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("账号")
-    @TableField("account")
-    private String account;
+    @ApiModelProperty("学生id")
+    @TableField("student_id")
+    private Integer studentId;
 
-    @ApiModelProperty("密码")
-    @TableField("password")
-    private String password;
-
-    @ApiModelProperty("姓名")
-    @TableField("name")
-    private String name;
-
-    @ApiModelProperty("头像")
-    @TableField("avatar")
-    private String avatar;
+    @ApiModelProperty("班级id")
+    @TableField("class_id")
+    private Integer classId;
 
 
 }
