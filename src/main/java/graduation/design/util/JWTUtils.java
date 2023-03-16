@@ -13,20 +13,9 @@ public class JWTUtils {
 
     private static final String jwtToken = "123456TeachingPlatform";
 
-    public static String createToken(Integer userId,String account){
+    public static String createToken(Integer userId){
         Map<String,Object> claims = new HashMap<>();
         claims.put("userId",userId);
-        if(account.startsWith("ad")){
-            claims.put("role","admin");
-        }else if(account.startsWith("as")){
-            claims.put("role","assistant");
-        }else if(account.startsWith("au")){
-            claims.put("role","author");
-        }else if(account.startsWith("t")){
-            claims.put("role","teacher");
-        }else if(account.startsWith("s")){
-            claims.put("role","student");
-        };
         JwtBuilder jwtBuilder = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, jwtToken) // 签发算法，秘钥为jwtToken
                 .setClaims(claims) // body数据，要唯一，自行设置

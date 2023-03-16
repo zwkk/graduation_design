@@ -1,9 +1,9 @@
 package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import graduation.design.entity.Author;
 import graduation.design.entity.Chapter;
-import graduation.design.service.AuthorService;
+import graduation.design.entity.User;
+import graduation.design.service.UserService;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,12 @@ import java.util.List;
 public class AuthorController {
 
     @Autowired
-    AuthorService authorService;
+    UserService userService;
 
-    @ApiOperation(value = "获取作者列表",response = Author.class)
+    @ApiOperation(value = "获取作者列表",response = User.class)
     @GetMapping ("/getAuthors")
     public Result getAuthors(){
-        List<Author> authors = authorService.list(new QueryWrapper<Author>().select("id","account","name","avatar"));
+        List<User> authors = userService.list(new QueryWrapper<User>().like("role_list","author").select("id","account","name","avatar"));
         return Result.success(authors);
     }
 

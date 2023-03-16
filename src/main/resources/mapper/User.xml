@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="graduation.design.dao.StudentMapper">
+<mapper namespace="graduation.design.dao.UserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="graduation.design.entity.Student">
+    <resultMap id="BaseResultMap" type="graduation.design.entity.User">
         <id column="id" property="id" />
         <result column="account" property="account" />
         <result column="password" property="password" />
         <result column="name" property="name" />
-        <result column="last_login" property="lastLogin" />
-        <result column="sex" property="sex" />
         <result column="avatar" property="avatar" />
-        <result column="class_id" property="classId" />
+        <result column="role_list" property="roleList" />
+        <result column="last_login" property="lastLogin" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, account, password, name, last_login, sex, avatar, class_id
+        id, account, password, name, avatar, role_list, last_login
     </sql>
 
 </mapper>

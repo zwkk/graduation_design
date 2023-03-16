@@ -1,7 +1,7 @@
 package graduation.design.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import graduation.design.entity.Author;
+import graduation.design.entity.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,5 +22,5 @@ public class SectionEditVo {
 
     @ApiModelProperty("作者列表")
     @TableField("authors")
-    private List<Author> authors;
+    private List<User> authors;
 }

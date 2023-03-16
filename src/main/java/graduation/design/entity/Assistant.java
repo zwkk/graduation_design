@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @TableName("assistant")
-@ApiModel(value = "Assistant对象", description = "助教表")
+@ApiModel(value = "Assistant对象", description = "助教权限表")
 public class Assistant implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,21 +32,9 @@ public class Assistant implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("账号")
-    @TableField("account")
-    private String account;
-
-    @ApiModelProperty("密码")
-    @TableField("password")
-    private String password;
-
-    @ApiModelProperty("姓名")
-    @TableField("name")
-    private String name;
-
-    @ApiModelProperty("头像")
-    @TableField("avatar")
-    private String avatar;
+    @ApiModelProperty("助教id")
+    @TableField("assistant_id")
+    private Integer assistantId;
 
     @ApiModelProperty("通知权限")
     @TableField("notice")

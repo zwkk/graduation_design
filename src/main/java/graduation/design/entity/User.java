@@ -4,27 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import lombok.Data;
 
-/**
- * <p>
- * 管理员表
- * </p>
- *
- * @author zwk
- * @since 2023年03月12日
- */
-@Getter
-@Setter
-@Accessors(chain = true)
-@TableName("admin")
-@ApiModel(value = "Admin对象", description = "管理员表")
-public class Admin implements Serializable {
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+@Data
+@TableName("user")
+@ApiModel(value = "User对象", description = "用户表")
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,5 +38,11 @@ public class Admin implements Serializable {
     @TableField("avatar")
     private String avatar;
 
+    @ApiModelProperty("角色权限")
+    @TableField("role_list")
+    private String roleList;
 
+    @ApiModelProperty("最后登录时间")
+    @TableField("last_login")
+    private LocalDateTime lastLogin;
 }
