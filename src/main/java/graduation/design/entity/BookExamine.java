@@ -49,9 +49,9 @@ public class BookExamine implements Serializable {
     @TableField("chapter_id")
     private Integer chapterId;
 
-    @ApiModelProperty("标题")
-    @TableField("title")
-    private String title;
+    @ApiModelProperty("拒绝理由")
+    @TableField("reason")
+    private String reason;
 
     @ApiModelProperty("内容")
     @TableField("content")

@@ -9,7 +9,7 @@
         <result column="author_id" property="authorId" />
         <result column="section_id" property="sectionId" />
         <result column="chapter_id" property="chapterId" />
-        <result column="title" property="title" />
+        <result column="reason" property="reason" />
         <result column="content" property="content" />
         <result column="version" property="version" />
         <result column="status" property="status" />
@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, time, author_id, section_id, chapter_id, title, content, version, status
+        id, time, author_id, section_id, chapter_id, reason, content, version, status
     </sql>
 
 </mapper>

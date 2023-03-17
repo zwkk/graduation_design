@@ -6,14 +6,13 @@ import graduation.design.entity.Section;
 import graduation.design.entity.SectionDetail;
 import graduation.design.service.*;
 import graduation.design.vo.BookExamineVo;
+import graduation.design.vo.ReasonVo;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,11 +86,12 @@ public class BookExamineController {
         return Result.success(null);
     }
 
-    @ApiOperation(value = "不通过")
-    @GetMapping("/fail")
-    public Result fail(@ApiParam("审核id") Integer id){
-        BookExamine bookExamine = bookExamineService.getById(id);
+    @ApiOperation(value = "不通过",response = ReasonVo.class)
+    @PostMapping("/fail")
+    public Result fail(@RequestBody ReasonVo reasonVo){
+        BookExamine bookExamine = bookExamineService.getById(reasonVo.getId());
         bookExamine.setStatus("不通过");
+        bookExamine.setReason(reasonVo.getReason());
         bookExamineService.updateById(bookExamine);
         return Result.success(null);
     }
