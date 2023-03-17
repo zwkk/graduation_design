@@ -1,14 +1,8 @@
 package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import graduation.design.entity.AuthorSection;
-import graduation.design.entity.Chapter;
-import graduation.design.entity.Section;
-import graduation.design.entity.SectionDetail;
-import graduation.design.service.AuthorSectionService;
-import graduation.design.service.ChapterService;
-import graduation.design.service.SectionDetailService;
-import graduation.design.service.SectionService;
+import graduation.design.entity.*;
+import graduation.design.service.*;
 import graduation.design.vo.ChapterSectionVo;
 import graduation.design.vo.ContentVo;
 import graduation.design.vo.Result;
@@ -17,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +38,9 @@ public class SectionController {
 
     @Autowired
     AuthorSectionService authorSectionService;
+
+    @Autowired
+    BookExamineService bookExamineService;
 
     @ApiOperation("新增节")
     @PostMapping("/addSection")
@@ -113,19 +111,23 @@ public class SectionController {
 
     @ApiOperation("作者编辑教材")
     @PostMapping ("/editContent")
-    public Result queryNewContent(@RequestBody ContentVo contentVo){
+    public Result editContent(@RequestBody ContentVo contentVo){
         if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",contentVo.getAuthorId()).eq("section_id",contentVo.getSectionId()))==null) {
             return Result.fail("无权限编辑");
         }
-        SectionDetail sectionDetail = new SectionDetail();
-        sectionDetail.setSectionId(contentVo.getSectionId()).setContent(contentVo.getContent()).setAuthorId(contentVo.getAuthorId());
+        BookExamine bookExamine = new BookExamine();
+        bookExamine.setTime(LocalDateTime.now());
+        bookExamine.setAuthorId(contentVo.getAuthorId());
+        bookExamine.setSectionId(contentVo.getSectionId());
+        bookExamine.setContent(contentVo.getContent());
         SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id",contentVo.getSectionId()).orderByDesc("version").last("limit 1"));
         if(detail==null) {
-            sectionDetail.setVersion("1");
+            bookExamine.setVersion("1");
         }else {
-            sectionDetail.setVersion(String.valueOf(Integer.parseInt(detail.getVersion())+1));
+            bookExamine.setVersion(String.valueOf(Integer.parseInt(detail.getVersion())+1));
         }
-        sectionDetailService.save(sectionDetail);
+        bookExamine.setStatus("待审核");
+        bookExamineService.save(bookExamine);
         return Result.success(null);
     }
 
