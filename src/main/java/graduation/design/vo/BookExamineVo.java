@@ -8,7 +8,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@ApiModel(description = "待审核列表")
+@ApiModel(description = "审核列表")
 public class BookExamineVo {
 
     @ApiModelProperty("审核主键")
@@ -32,8 +32,13 @@ public class BookExamineVo {
     @ApiModelProperty("节标题")
     private String sectionTitle;
 
+    @ApiModelProperty("节id")
+    private Integer sectionId;
+
     @ApiModelProperty("版本号")
     private String version;
 
+    @ApiModelProperty("审核状态")
+    private String status;
 
 }

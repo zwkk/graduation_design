@@ -1,7 +1,7 @@
 package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import graduation.design.entity.Chapter;
+import graduation.design.annotation.Authority;
 import graduation.design.entity.User;
 import graduation.design.service.UserService;
 import graduation.design.vo.Result;
@@ -26,7 +26,8 @@ public class AuthorController {
     @Autowired
     UserService userService;
 
-    @ApiOperation(value = "获取作者列表",response = User.class)
+    @Authority("admin")
+    @ApiOperation(value = "获取作者列表,接口权限admin",response = User.class)
     @GetMapping ("/getAuthors")
     public Result getAuthors(){
         List<User> authors = userService.list(new QueryWrapper<User>().like("role_list","author").select("id","account","name","avatar"));

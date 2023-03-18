@@ -1,6 +1,7 @@
 package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import graduation.design.annotation.Authority;
 import graduation.design.entity.Chapter;
 import graduation.design.entity.Section;
 import graduation.design.service.ChapterService;
@@ -32,7 +33,8 @@ public class ChapterController {
     @Autowired
     SectionService sectionService;
 
-    @ApiOperation("新增章")
+    @Authority("admin")
+    @ApiOperation("新增章,接口权限admin")
     @PostMapping("/addChapter")
     public Result addChapter(@RequestBody Chapter chapter){
         chapter.setId(null);
@@ -40,7 +42,8 @@ public class ChapterController {
         return Result.success(null);
     }
 
-    @ApiOperation("删除章")
+    @Authority("admin")
+    @ApiOperation("删除章,接口权限admin")
     @GetMapping("/deleteChapter")
     public Result deleteChapter(Integer id){
         if(chapterService.getById(id)==null){
@@ -51,7 +54,8 @@ public class ChapterController {
         return Result.success(null);
     }
 
-    @ApiOperation("修改章")
+    @Authority("admin")
+    @ApiOperation("修改章,接口权限admin")
     @PostMapping("/changeChapter")
     public Result changeChapter(@RequestBody Chapter chapter){
         if(chapterService.getById(chapter.getId())==null){
@@ -61,7 +65,7 @@ public class ChapterController {
         return Result.success(null);
     }
 
-    @ApiOperation(value = "获取章节目录",response = ChapterSectionVo.class)
+    @ApiOperation(value = "获取章节目录,接口权限all",response = ChapterSectionVo.class)
     @GetMapping ("/getChapter")
     public Result getChapter(){
         List<ChapterSectionVo> chapterSectionVoList = new ArrayList<>();

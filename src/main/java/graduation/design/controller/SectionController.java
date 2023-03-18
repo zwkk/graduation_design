@@ -1,6 +1,7 @@
 package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import graduation.design.annotation.Authority;
 import graduation.design.entity.*;
 import graduation.design.service.*;
 import graduation.design.vo.ChapterSectionVo;
@@ -42,7 +43,8 @@ public class SectionController {
     @Autowired
     BookExamineService bookExamineService;
 
-    @ApiOperation("新增节")
+    @Authority("admin")
+    @ApiOperation("新增节,接口权限admin")
     @PostMapping("/addSection")
     public Result addSection(@RequestBody Section section){
         section.setId(null);
@@ -51,7 +53,8 @@ public class SectionController {
         return Result.success(null);
     }
 
-    @ApiOperation("删除节")
+    @Authority("admin")
+    @ApiOperation("删除节,接口权限admin")
     @GetMapping("/deleteSection")
     public Result deleteSection(Integer id){
         if(sectionService.getById(id)==null){
@@ -61,7 +64,8 @@ public class SectionController {
         return Result.success(null);
     }
 
-    @ApiOperation("修改节")
+    @Authority("admin")
+    @ApiOperation("修改节,接口权限admin")
     @PostMapping("/changeSection")
     public Result changeSection(@RequestBody Section section){
         if(sectionService.getById(section.getId())==null){
@@ -71,14 +75,14 @@ public class SectionController {
         return Result.success(null);
     }
 
-    @ApiOperation(value = "查询某节版本列表",response = SectionDetail.class)
+    @ApiOperation(value = "查询某节版本列表,接口权限all",response = SectionDetail.class)
     @GetMapping("/querySection")
     public Result querySection(Integer sectionId){
         List<SectionDetail> versionList = sectionDetailService.list(new QueryWrapper<SectionDetail>().eq("section_id", sectionId).select("section_id", "version"));
         return Result.success(versionList);
     }
 
-    @ApiOperation(value = "根据节和版本号查询教材内容",response = SectionVo.class)
+    @ApiOperation(value = "根据节和版本号查询教材内容,接口权限all",response = SectionVo.class)
     @GetMapping ("/queryContent")
     public Result queryContent(Integer sectionId,String version){
         SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id", sectionId).eq("version", version));
@@ -90,7 +94,7 @@ public class SectionController {
         return Result.success(sectionVo);
     }
 
-    @ApiOperation(value = "根据节查询教材内容,默认最新",response = SectionVo.class)
+    @ApiOperation(value = "根据节查询教材内容,默认最新,接口权限all",response = SectionVo.class)
     @GetMapping ("/queryNewContent")
     public Result queryNewContent(Integer sectionId){
         SectionVo sectionVo = new SectionVo();
@@ -109,11 +113,15 @@ public class SectionController {
         return Result.success(sectionVo);
     }
 
-    @ApiOperation("作者编辑教材")
+    @Authority("author")
+    @ApiOperation("作者编辑教材,接口权限author")
     @PostMapping ("/editContent")
     public Result editContent(@RequestBody ContentVo contentVo){
         if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",contentVo.getAuthorId()).eq("section_id",contentVo.getSectionId()))==null) {
             return Result.fail("无权限编辑");
+        }
+        if(bookExamineService.getOne(new QueryWrapper<BookExamine>().eq("author_id",contentVo.getAuthorId()).eq("section_id",contentVo.getSectionId()).eq("status","待审核"))!=null){
+            return Result.fail("请勿重复上传教材");
         }
         BookExamine bookExamine = new BookExamine();
         bookExamine.setTime(LocalDateTime.now());

@@ -22,7 +22,7 @@ public class LoginController {
     @Autowired
     UserService userService;
 
-    @ApiOperation(value = "登录,返回token")
+    @ApiOperation(value = "登录,返回token,接口权限all")
     @PostMapping("/login")
     public Result login(@RequestBody LoginParam loginParam){
         String account = loginParam.getAccount();
@@ -38,7 +38,7 @@ public class LoginController {
         return Result.success(token);
     }
 
-    @ApiOperation(value = "根据token获取当前登录的用户信息",response = User.class)
+    @ApiOperation(value = "根据token获取当前登录的用户信息,接口权限all",response = User.class)
     @GetMapping("/getUser")
     public Result getUser(@RequestHeader("Authorization") String token){
         Map<String, Object> map = JWTUtils.checkToken(token);
