@@ -6,10 +6,7 @@ import graduation.design.entity.BookExamine;
 import graduation.design.entity.Section;
 import graduation.design.entity.SectionDetail;
 import graduation.design.service.*;
-import graduation.design.vo.BookExamineVo;
-import graduation.design.vo.ModifyVo;
-import graduation.design.vo.ReasonVo;
-import graduation.design.vo.Result;
+import graduation.design.vo.*;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -71,19 +68,23 @@ public class BookExamineController {
     }
 
     @Authority({"admin","author"})
-    @ApiOperation(value = "根据审核列表id展开文章内容,接口权限admin,author")
+    @ApiOperation(value = "根据审核列表id展开文章内容以及审核意见,接口权限admin,author",response = ContentReasonVo.class)
     @GetMapping("/content")
     public Result list(Integer id){
         BookExamine bookExamine = bookExamineService.getById(id);
-        return Result.success(bookExamine.getContent());
+        ContentReasonVo contentReasonVo = new ContentReasonVo();
+        contentReasonVo.setContent(bookExamine.getContent());
+        contentReasonVo.setReason(bookExamine.getReason());
+        return Result.success(contentReasonVo);
     }
 
     @Authority("admin")
-    @ApiOperation(value = "通过,接口权限admin")
+    @ApiOperation(value = "通过,接口权限admin",response = ReasonVo.class)
     @GetMapping("/pass")
-    public Result pass(@ApiParam("审核id") Integer id){
-        BookExamine bookExamine = bookExamineService.getById(id);
+    public Result pass(@RequestBody ReasonVo reasonVo){
+        BookExamine bookExamine = bookExamineService.getById(reasonVo.getId());
         bookExamine.setStatus("通过");
+        bookExamine.setReason(reasonVo.getReason());
         bookExamineService.updateById(bookExamine);
         SectionDetail sectionDetail = new SectionDetail();
         sectionDetail.setSectionId(bookExamine.getSectionId());
@@ -137,6 +138,10 @@ public class BookExamineController {
     @ApiOperation(value = "撤回,接口权限author")
     @GetMapping("/recall")
     public Result recall(Integer bookExamineId){
+        BookExamine bookExamine = bookExamineService.getById(bookExamineId);
+        if(!"待审核".equals(bookExamine.getStatus())){
+            return Result.fail("不能撤回已经审核的内容");
+        }
         bookExamineService.removeById(bookExamineId);
         return Result.success(null);
     }

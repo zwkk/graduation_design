@@ -9,6 +9,7 @@ import graduation.design.service.SectionService;
 import graduation.design.vo.ChapterSectionVo;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,7 +67,7 @@ public class ChapterController {
     }
 
     @ApiOperation(value = "获取章节目录,接口权限all",response = ChapterSectionVo.class)
-    @GetMapping ("/getChapter")
+    @GetMapping ( "/getChapter")
     public Result getChapter(){
         List<ChapterSectionVo> chapterSectionVoList = new ArrayList<>();
         List<Chapter> chapterList = chapterService.list();

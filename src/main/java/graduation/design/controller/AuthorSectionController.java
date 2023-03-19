@@ -72,7 +72,8 @@ public class AuthorSectionController {
     @Authority("admin")
     @ApiOperation("编辑某一节作者列表,接口权限admin")
     @PostMapping("/edit/authors")
-    public Result editAuthors(@RequestParam(value = "ids[]") Integer[] ids,@RequestParam(value = "sectionId") Integer sectionId){
+    public Result editAuthors(Integer[] ids,@RequestParam(value = "sectionId") Integer sectionId){
+        authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",sectionId));
         for (Integer id : ids) {
             User user = userService.getById(id);
             if(user==null) return Result.fail("账号不存在");
