@@ -67,7 +67,7 @@ public class ChapterController {
     }
 
     @ApiOperation(value = "获取章节目录,接口权限all",response = ChapterSectionVo.class)
-    @GetMapping ( "/getChapter")
+    @GetMapping ("/getChapter")
     public Result getChapter(){
         List<ChapterSectionVo> chapterSectionVoList = new ArrayList<>();
         List<Chapter> chapterList = chapterService.list();
