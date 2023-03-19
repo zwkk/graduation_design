@@ -9,7 +9,6 @@ import graduation.design.service.SectionService;
 import graduation.design.vo.ChapterSectionVo;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -79,7 +79,7 @@ public class BookExamineController {
     }
 
     @Authority("admin")
-    @ApiOperation(value = "通过,接口权限admin",response = ReasonVo.class)
+    @ApiOperation(value = "通过,接口权限admin")
     @GetMapping("/pass")
     public Result pass(@RequestBody ReasonVo reasonVo){
         BookExamine bookExamine = bookExamineService.getById(reasonVo.getId());
