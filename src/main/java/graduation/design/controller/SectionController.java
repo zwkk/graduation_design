@@ -60,6 +60,9 @@ public class SectionController {
         if(sectionService.getById(id)==null){
             return Result.fail("该节不存在");
         }
+        authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",id));
+        bookExamineService.remove(new QueryWrapper<BookExamine>().eq("section_id",id));
+        sectionDetailService.remove(new QueryWrapper<SectionDetail>().eq("section_id",id));
         sectionService.removeById(id);
         return Result.success(null);
     }

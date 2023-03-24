@@ -2,10 +2,8 @@ package graduation.design.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
-import graduation.design.entity.Chapter;
-import graduation.design.entity.Section;
-import graduation.design.service.ChapterService;
-import graduation.design.service.SectionService;
+import graduation.design.entity.*;
+import graduation.design.service.*;
 import graduation.design.vo.ChapterSectionVo;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +31,15 @@ public class ChapterController {
     @Autowired
     SectionService sectionService;
 
+    @Autowired
+    AuthorSectionService authorSectionService;
+
+    @Autowired
+    BookExamineService bookExamineService;
+
+    @Autowired
+    SectionDetailService sectionDetailService;
+
     @Authority("admin")
     @ApiOperation("新增章,接口权限admin")
     @PostMapping("/addChapter")
@@ -48,6 +55,12 @@ public class ChapterController {
     public Result deleteChapter(Integer id){
         if(chapterService.getById(id)==null){
             return Result.fail("该章不存在");
+        }
+        List<Section> sections = sectionService.list(new QueryWrapper<Section>().eq("chapter_id", id));
+        for (Section section : sections) {
+            authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",section.getId()));
+            bookExamineService.remove(new QueryWrapper<BookExamine>().eq("section_id",section.getId()));
+            sectionDetailService.remove(new QueryWrapper<SectionDetail>().eq("section_id",section.getId()));
         }
         sectionService.remove(new QueryWrapper<Section>().eq("chapter_id",id));
         chapterService.removeById(id);

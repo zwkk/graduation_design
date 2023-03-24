@@ -30,7 +30,7 @@ public class AuthorController {
     @ApiOperation(value = "获取作者列表,接口权限admin",response = User.class)
     @GetMapping ("/getAuthors")
     public Result getAuthors(){
-        List<User> authors = userService.list(new QueryWrapper<User>().like("role_list","author").select("id","account","name","avatar"));
+        List<User> authors = userService.list(new QueryWrapper<User>().like("role_list","author").select("id","account","name","avatar","last_login"));
         return Result.success(authors);
     }
 
