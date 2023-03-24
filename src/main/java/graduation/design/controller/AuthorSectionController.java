@@ -72,19 +72,19 @@ public class AuthorSectionController {
     @Authority("admin")
     @ApiOperation("编辑某一节作者列表,接口权限admin")
     @PostMapping("/edit/authors")
-    public Result editAuthors(Integer[] ids,@RequestParam(value = "sectionId") Integer sectionId){
-        authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",sectionId));
-        for (Integer id : ids) {
+    public Result editAuthors(@RequestBody AuthorSectionVo authorSectionVo){
+        if(sectionService.getById(authorSectionVo.getSectionId())==null) return Result.fail("该节不存在");
+        authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",authorSectionVo.getSectionId()));
+        for (Integer id : authorSectionVo.getAuthorIds()) {
             User user = userService.getById(id);
             if(user==null) return Result.fail("账号不存在");
             List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(","));
             if(!list.contains("author")){
                 return Result.fail("请先申请成为作者");
             }
-            if(sectionService.getById(sectionId)==null) return Result.fail("该节不存在");
-            if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",id).eq("section_id",sectionId))!=null) return Result.fail("该权限已存在");
+            if(authorSectionService.getOne(new QueryWrapper<AuthorSection>().eq("author_id",id).eq("section_id",authorSectionVo.getSectionId()))!=null) return Result.fail("该权限已存在");
             AuthorSection authorSection = new AuthorSection();
-            authorSection.setAuthorId(id).setSectionId(sectionId);
+            authorSection.setAuthorId(id).setSectionId(authorSectionVo.getSectionId());
             authorSectionService.save(authorSection);
         }
         return Result.success("添加权限成功");
