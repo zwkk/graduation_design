@@ -103,7 +103,7 @@ public class ToolController {
         return Result.success(toolAbstractVoList);
     }
 
-    @ApiOperation(value = "根据工具id查看工具详情,接口权限all")
+    @ApiOperation(value = "根据工具id查看工具详情,接口权限all",response = ToolDetailVo.class)
     @GetMapping("/detail")
     public Result detail(Integer id){
         ToolDetailVo toolDetailVo = new ToolDetailVo();
@@ -158,7 +158,7 @@ public class ToolController {
         return Result.success(toolDetailVo);
     }
 
-    @ApiOperation(value = "根据工具id查看所有评论,接口权限all")
+    @ApiOperation(value = "根据工具id查看所有评论,接口权限all",response = CommentVo.class)
     @GetMapping("/comments")
     public Result comments(Integer id){
         List<CommentVo> list = new ArrayList<>();

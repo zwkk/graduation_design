@@ -30,7 +30,7 @@ public class LabelController {
     @Autowired
     LabelService labelService;
 
-    @ApiOperation(value = "获取标签列表,接口权限all")
+    @ApiOperation(value = "获取标签列表,接口权限all",response = Label.class)
     @GetMapping("/list")
     public Result list(){
         List<Label> labels = labelService.list();
