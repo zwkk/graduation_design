@@ -36,9 +36,9 @@ public class ToolComment implements Serializable {
     @TableField("tool_id")
     private Integer toolId;
 
-    @ApiModelProperty("学生id")
-    @TableField("student_id")
-    private Integer studentId;
+    @ApiModelProperty("用户id")
+    @TableField("user_id")
+    private Integer userId;
 
     @ApiModelProperty("星级")
     @TableField("star")

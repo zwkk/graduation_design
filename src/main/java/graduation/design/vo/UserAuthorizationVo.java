@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-@ApiModel(description = "工具")
-public class ToolVo {
+@ApiModel(description = "用户信息及权限列表")
+public class UserAuthorizationVo {
 
     @ApiModelProperty("id")
     private Integer id;
@@ -14,12 +16,9 @@ public class ToolVo {
     @ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("描述")
-    private String description;
+    @ApiModelProperty("账号")
+    private String account;
 
-    @ApiModelProperty("链接")
-    private String link;
-
-    @ApiModelProperty("标签id列表")
-    private Integer[] labelIds;
+    @ApiModelProperty("权限列表")
+    private List<String> authorizations;
 }

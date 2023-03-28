@@ -3,12 +3,8 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
 import graduation.design.entity.Label;
-import graduation.design.entity.Tool;
-import graduation.design.entity.ToolLabel;
 import graduation.design.service.LabelService;
-import graduation.design.vo.LabelsVo;
 import graduation.design.vo.Result;
-import graduation.design.vo.ToolVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,14 +34,29 @@ public class LabelController {
     }
 
     @Authority("admin")
-    @ApiOperation(value = "编辑标签列表,接口权限admin")
-    @PostMapping("/edit")
-    public Result edit(@RequestBody LabelsVo labelsVo){
-        labelService.removeByIds(labelService.list());
-        for (Label label : labelsVo.getLabels()) {
-            labelService.save(label);
-        }
-        return Result.success("编辑成功");
+    @ApiOperation(value = "增加标签,接口权限admin")
+    @PostMapping("/add")
+    public Result add(@RequestBody Label label){
+        label.setId(null);
+        if(labelService.getOne(new QueryWrapper<Label>().eq("name",label.getName()))!=null) return Result.fail("该标签已存在");
+        labelService.save(label);
+        return Result.success("添加成功");
+    }
+
+    @Authority("admin")
+    @ApiOperation(value = "修改标签,接口权限admin")
+    @PostMapping("/modify")
+    public Result modify(@RequestBody Label label){
+        labelService.saveOrUpdate(label);
+        return Result.success("修改成功");
+    }
+
+    @Authority("admin")
+    @ApiOperation(value = "删除标签,接口权限admin")
+    @GetMapping("/delete")
+    public Result delete(Integer labelId){
+        labelService.removeById(labelId);
+        return Result.success("删除成功");
     }
 
 }

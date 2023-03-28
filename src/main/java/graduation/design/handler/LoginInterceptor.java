@@ -54,7 +54,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         Authority authority = method.getAnnotation(Authority.class);
         if(authority!=null){
             String roleList = user.getRoleList();
-            List<String> roles = Arrays.asList(roleList.replaceAll("[\\[\\]]", "").split(","));
+            List<String> roles = Arrays.asList(roleList.replaceAll("[\\[\\]]", "").split(", "));
             String[] authorities = authority.value();
             for (String role : roles) {
                 for (String s : authorities) {

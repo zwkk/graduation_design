@@ -65,6 +65,26 @@ public class ToolController {
     }
 
     @Authority("admin")
+    @ApiOperation(value = "修改工具,接口权限admin")
+    @PostMapping("/modify")
+    public Result modify(@RequestBody ToolVo toolVo){
+        Tool tool = toolService.getById(toolVo.getId());
+        if(tool==null) return Result.fail("该工具不存在");
+        tool.setName(toolVo.getName());
+        tool.setDescription(toolVo.getDescription());
+        tool.setLink(toolVo.getLink());
+        toolService.saveOrUpdate(tool);
+        Integer[] labelIds = toolVo.getLabelIds();
+        toolLabelService.remove(new QueryWrapper<ToolLabel>().eq("tool_id",tool.getId()));
+        for (Integer labelId : labelIds) {
+            ToolLabel toolLabel = new ToolLabel();
+            toolLabel.setToolId(tool.getId()).setLabelId(labelId);
+            toolLabelService.save(toolLabel);
+        }
+        return Result.success("修改成功");
+    }
+
+    @Authority("admin")
     @ApiOperation(value = "删除工具,接口权限admin")
     @GetMapping("/delete")
     public Result delete(Integer toolId){
@@ -89,7 +109,7 @@ public class ToolController {
                 String result = String.format("%.1f",score);
                 toolAbstractVo.setScore(result);
             }else {
-                toolAbstractVo.setScore("暂无评分");
+                toolAbstractVo.setScore("0");
             }
             List<ToolLabel> labelNames = toolLabelService.list(new QueryWrapper<ToolLabel>().eq("tool_id", tool.getId()));
             Label[] labels = new Label[labelNames.size()];
@@ -124,15 +144,17 @@ public class ToolController {
             String result = String.format("%.1f",score);
             toolDetailVo.setScore(result);
         }else {
-            toolDetailVo.setScore("暂无评分");
+            toolDetailVo.setScore("0");
         }
         ToolComment comment = toolCommentService.getOne(new QueryWrapper<ToolComment>().eq("tool_id", id).orderByDesc("id").last("limit 1"));
         CommentVo commentVo = new CommentVo();
-        commentVo.setId(comment.getId());
-        commentVo.setName(userService.getById(comment.getStudentId()).getName());
-        commentVo.setTitle(comment.getTitle());
-        commentVo.setContent(comment.getContent());
-        commentVo.setStar(comment.getStar());
+        if(comment!=null){
+            commentVo.setId(comment.getId());
+            commentVo.setName(userService.getById(comment.getUserId()).getName());
+            commentVo.setTitle(comment.getTitle());
+            commentVo.setContent(comment.getContent());
+            commentVo.setStar(comment.getStar());
+        }
         toolDetailVo.setComment(commentVo);
         List<ToolLabel> toolLabels = toolLabelService.list(new QueryWrapper<ToolLabel>().eq("tool_id", id));
         if(toolLabels.size()==0) {
@@ -166,7 +188,7 @@ public class ToolController {
         for (ToolComment comment : comments) {
             CommentVo commentVo = new CommentVo();
             commentVo.setId(comment.getId());
-            commentVo.setName(userService.getById(comment.getStudentId()).getName());
+            commentVo.setName(userService.getById(comment.getUserId()).getName());
             commentVo.setTitle(comment.getTitle());
             commentVo.setContent(comment.getContent());
             commentVo.setStar(comment.getStar());
@@ -177,7 +199,7 @@ public class ToolController {
 
     @ApiOperation(value = "根据标签id查找相关工具列表,不带标签id则查询所有工具,接口权限all",response = ToolAbstractVo.class)
     @PostMapping("/find")
-    public Result detail(@RequestBody IdVo idVo){
+    public Result find(@RequestBody IdVo idVo){
         if(idVo.getIds().length==0) return get();
         Integer[] ids = idVo.getIds();
         List<ToolAbstractVo> toolAbstractVoList = new ArrayList<>();

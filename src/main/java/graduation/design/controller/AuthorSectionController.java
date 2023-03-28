@@ -49,7 +49,7 @@ public class AuthorSectionController {
     public Result addEdit(Integer authorId,Integer sectionId){
         User user = userService.getById(authorId);
         if(user==null) return Result.fail("账号不存在");
-        List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(","));
+        List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
         if(!list.contains("author")){
             return Result.fail("请先申请成为作者");
         }
@@ -78,7 +78,7 @@ public class AuthorSectionController {
         for (Integer id : authorSectionVo.getAuthorIds()) {
             User user = userService.getById(id);
             if(user==null) return Result.fail("账号不存在");
-            List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(","));
+            List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
             if(!list.contains("author")){
                 return Result.fail("请先申请成为作者");
             }

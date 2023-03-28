@@ -8,12 +8,6 @@
         <result column="name" property="name" />
         <result column="num" property="num" />
         <result column="term" property="term" />
-        <result column="teacher1" property="teacher1" />
-        <result column="teacher2" property="teacher2" />
-        <result column="teacher3" property="teacher3" />
-        <result column="assistant1" property="assistant1" />
-        <result column="assistant2" property="assistant2" />
-        <result column="assistant3" property="assistant3" />
     </resultMap>
 
     <!-- 通用查询结果列 -->

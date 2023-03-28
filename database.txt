@@ -1,0 +1,26 @@
+3.28:
+tool表:
+    description字段类型改为longtext
+
+tool_comment表:
+    content字段类型改为longtext
+    student_id字段名改为user_id
+
+class表:
+    删除teacher和assistant的各三个字段
+
+新建teacher_class表:
+    CREATE TABLE `teaching_platform`.`teacher_class`  (
+      `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+      `teacher_id` int NULL DEFAULT NULL COMMENT '教师id',
+      `class_id` int NULL DEFAULT NULL COMMENT '班级id',
+      PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '教师班级表' ROW_FORMAT = Dynamic;
+
+新建assistant_class表:
+    CREATE TABLE `teaching_platform`.`assistant_class`  (
+      `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+      `assistant_id` int NULL DEFAULT NULL COMMENT '助教id',
+      `class_id` int NULL DEFAULT NULL COMMENT '班级id',
+      PRIMARY KEY (`id`) USING BTREE
+    ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '助教班级表' ROW_FORMAT = Dynamic;

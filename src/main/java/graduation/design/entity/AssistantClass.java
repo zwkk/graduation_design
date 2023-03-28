@@ -4,16 +4,17 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
  * <p>
- * 班级表
+ * 学生表
  * </p>
  *
  * @author zwk
@@ -22,9 +23,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("class")
-@ApiModel(value = "Class对象", description = "班级表")
-public class Class implements Serializable {
+@TableName("assistant_class")
+@ApiModel(value = "Assistant对象", description = "助教班级表")
+public class AssistantClass implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,16 +33,13 @@ public class Class implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("班级名")
-    @TableField("name")
-    private String name;
+    @ApiModelProperty("助教id")
+    @TableField("assistant_id")
+    private Integer assistantId;
 
-    @ApiModelProperty("班级人数")
-    @TableField("num")
-    private Integer num;
+    @ApiModelProperty("班级id")
+    @TableField("class_id")
+    private Integer classId;
 
-    @ApiModelProperty("学期")
-    @TableField("term")
-    private String term;
 
 }
