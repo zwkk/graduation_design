@@ -3,7 +3,9 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
 import graduation.design.entity.Label;
+import graduation.design.entity.ToolLabel;
 import graduation.design.service.LabelService;
+import graduation.design.service.ToolLabelService;
 import graduation.design.vo.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class LabelController {
 
     @Autowired
     LabelService labelService;
+
+    @Autowired
+    ToolLabelService toolLabelService;
 
     @ApiOperation(value = "获取标签列表,接口权限all",response = Label.class)
     @GetMapping("/list")
@@ -56,6 +61,7 @@ public class LabelController {
     @GetMapping("/delete")
     public Result delete(Integer labelId){
         labelService.removeById(labelId);
+        toolLabelService.remove(new QueryWrapper<ToolLabel>().eq("label_id",labelId));
         return Result.success("删除成功");
     }
 
