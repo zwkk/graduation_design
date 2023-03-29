@@ -24,3 +24,8 @@ class表:
       `class_id` int NULL DEFAULT NULL COMMENT '班级id',
       PRIMARY KEY (`id`) USING BTREE
     ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '助教班级表' ROW_FORMAT = Dynamic;
+
+
+3.29:
+tool_comment表:
+    新增字段名time，类型datetime

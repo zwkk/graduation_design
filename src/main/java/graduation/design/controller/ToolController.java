@@ -177,6 +177,13 @@ public class ToolController {
             }
         }
         toolDetailVo.setList(toolAbstractVoList);
+        List<ToolLabel> labelNames = toolLabelService.list(new QueryWrapper<ToolLabel>().eq("tool_id", id));
+        Label[] labels = new Label[labelNames.size()];
+        for (int i = 0; i < labelNames.size(); i++) {
+            Integer labelId = labelNames.get(i).getLabelId();
+            labels[i] = labelService.getById(labelId);
+        }
+        toolDetailVo.setLabels(labels);
         return Result.success(toolDetailVo);
     }
 

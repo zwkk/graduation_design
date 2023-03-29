@@ -1,5 +1,6 @@
 package graduation.design.vo;
 
+import graduation.design.entity.Label;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -48,5 +49,8 @@ public class ToolDetailVo {
 
     @ApiModelProperty("其它相关工具列表")
     private List<ToolAbstractVo> list;
+
+    @ApiModelProperty("标签")
+    private Label[] labels;
 
 }

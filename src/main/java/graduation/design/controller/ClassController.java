@@ -5,6 +5,7 @@ import graduation.design.annotation.Authority;
 import graduation.design.entity.*;
 import graduation.design.entity.Class;
 import graduation.design.service.*;
+import graduation.design.util.JWTUtils;
 import graduation.design.vo.ClassMembers;
 import graduation.design.vo.ClassVo;
 import graduation.design.vo.Result;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -49,13 +51,27 @@ public class ClassController {
     @Authority({"admin","teacher"})
     @ApiOperation("新增班级,接口权限admin,teacher")
     @PostMapping("/add")
-    public Result add(@RequestBody Class c){
+    public Result add(@RequestHeader("Authorization") String token,@RequestBody Class c){
         c.setId(null);
         c.setNum(0);
         if(c.getName()==null || c.getTerm()==null){
             return Result.fail("班级名以及学期不能为空");
         }
+        Class c2 = classService.getOne(new QueryWrapper<Class>().eq("name", c.getName()));
+        if(c2!=null) return Result.fail("班级名已存在");
         classService.save(c);
+        Class c3 = classService.getOne(new QueryWrapper<Class>().eq("name", c.getName()));
+        Map<String, Object> map = JWTUtils.checkToken(token);
+        if(map==null){
+            return Result.fail("用户未登录");
+        }
+        User user = userService.getById(Integer.valueOf(map.get("userId").toString()));
+        List<String> roleList = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
+        if(roleList.contains("teacher")){
+            TeacherClass teacherClass = new TeacherClass();
+            teacherClass.setTeacherId(user.getId()).setClassId(c3.getId());
+            teacherClassService.save(teacherClass);
+        }
         return Result.success(null);
     }
 
@@ -81,8 +97,38 @@ public class ClassController {
 
     @ApiOperation("查询班级列表,接口权限all")
     @GetMapping("/query")
-    public Result query(){
-        List<Class> list = classService.list();
+    public Result query(Integer userId){
+        User user = userService.getById(userId);
+        List<String> roleList = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
+        if(roleList.contains("admin")){
+            List<Class> list = classService.list();
+            return Result.success(list);
+        }else if(roleList.contains("teacher")){
+            List<TeacherClass> teacherClasses = teacherClassService.list(new QueryWrapper<TeacherClass>().eq("teacher_id", userId));
+            List<Class> list = new ArrayList<>();
+            for (TeacherClass teacherClass : teacherClasses) {
+                Class class1 = classService.getById(teacherClass.getClassId());
+                list.add(class1);
+            }
+            return Result.success(list);
+        }else if(roleList.contains("assistant")){
+            List<AssistantClass> assistantClasses = assistantClassService.list(new QueryWrapper<AssistantClass>().eq("assistant_id", userId));
+            List<Class> list = new ArrayList<>();
+            for (AssistantClass assistantClass : assistantClasses) {
+                Class class1 = classService.getById(assistantClass.getClassId());
+                list.add(class1);
+            }
+            return Result.success(list);
+        }else if(roleList.contains("student")){
+            List<StudentClass> studentClasses = studentClassService.list(new QueryWrapper<StudentClass>().eq("student_id", userId));
+            List<Class> list = new ArrayList<>();
+            for (StudentClass studentClass : studentClasses) {
+                Class class1 = classService.getById(studentClass.getClassId());
+                list.add(class1);
+            }
+            return Result.success(list);
+        }
+        List<Class> list = new ArrayList<>();
         return Result.success(list);
     }
 
