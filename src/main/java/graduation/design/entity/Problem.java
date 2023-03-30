@@ -48,5 +48,7 @@ public class Problem implements Serializable {
     @TableField("difficulty")
     private String difficulty;
 
-
+    @ApiModelProperty("是否删除")
+    @TableField("del")
+    private Integer del;
 }

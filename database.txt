@@ -29,3 +29,7 @@ class表:
 3.29:
 tool_comment表:
     新增字段名time，类型datetime
+
+3.30
+problem表:
+    新增字段名del，类型tinyint
