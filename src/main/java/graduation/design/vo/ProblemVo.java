@@ -15,7 +15,7 @@ public class ProblemVo {
     private String content;
 
     @ApiModelProperty("答案")
-    private String answer;
+    private String[] answer;
 
     @ApiModelProperty("题目类型,(选择/判断/填空/简答/其它)")
     private String type;
@@ -25,5 +25,11 @@ public class ProblemVo {
 
     @ApiModelProperty("相关节id")
     private Integer[] sectionIds;
+
+    @ApiModelProperty("选择题选项")
+    private String[] options;
+
+    @ApiModelProperty("填空题填空数,不用传")
+    private Integer num;
 
 }

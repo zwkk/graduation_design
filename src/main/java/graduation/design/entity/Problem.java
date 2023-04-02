@@ -51,4 +51,8 @@ public class Problem implements Serializable {
     @ApiModelProperty("是否删除")
     @TableField("del")
     private Integer del;
+
+    @ApiModelProperty("选择题选项")
+    @TableField("options")
+    private String options;
 }

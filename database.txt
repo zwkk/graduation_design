@@ -33,3 +33,7 @@ tool_comment表:
 3.30
 problem表:
     新增字段名del，类型tinyint
+
+4.2
+problem表:
+    新增字段名options，类型text

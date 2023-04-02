@@ -4,11 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
 import graduation.design.entity.Problem;
 import graduation.design.entity.ProblemSection;
-import graduation.design.entity.User;
 import graduation.design.service.HomeworkProblemService;
 import graduation.design.service.ProblemSectionService;
 import graduation.design.service.ProblemService;
-import graduation.design.vo.AuthorizationVo;
 import graduation.design.vo.ProblemVo;
 import graduation.design.vo.ConditionVo;
 import graduation.design.vo.Result;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,7 +44,7 @@ public class ProblemController {
     @PostMapping("/add")
     public Result add(@RequestBody ProblemVo problemVo){
         Problem problem = new Problem();
-        problem.setContent(problemVo.getContent()).setAnswer(problemVo.getAnswer()).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0);
+        problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
         Problem problem1 = problemService.getOne(new QueryWrapper<Problem>().eq("content", problem.getContent()).eq("del",0));
         if(problem1!=null) return Result.fail("该题目已存在");
         problemService.save(problem);
@@ -64,7 +63,7 @@ public class ProblemController {
     @PostMapping("/modify")
     public Result modify(@RequestBody ProblemVo problemVo){
         Problem problem = problemService.getById(problemVo.getId());
-        problem.setContent(problemVo.getContent()).setAnswer(problemVo.getAnswer()).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0);
+        problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
         problemService.saveOrUpdate(problem);
         problemSectionService.remove(new QueryWrapper<ProblemSection>().eq("problem_id",problemVo.getId()));
         Integer[] sectionIds = problemVo.getSectionIds();
@@ -108,9 +107,19 @@ public class ProblemController {
                 ProblemVo problemVo = new ProblemVo();
                 problemVo.setContent(problem.getContent());
                 problemVo.setId(problem.getId());
-                problemVo.setAnswer(problem.getAnswer());
+                String[] answer = (String[]) Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                problemVo.setAnswer(answer);
+                String[] options = (String[]) Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                problemVo.setOptions(options);
+                problemVo.setNum(answer.length);
                 problemVo.setType(problem.getType());
                 problemVo.setDifficulty(problem.getDifficulty());
+                List<ProblemSection> problemSections = problemSectionService.list(new QueryWrapper<ProblemSection>().eq("problem_id", problem.getId()));
+                Integer[] sections = new Integer[problemSections.size()];
+                for (int i = 0; i < problemSections.size(); i++) {
+                    sections[i]=problemSections.get(i).getSectionId();
+                }
+                problemVo.setSectionIds(sections);
                 problemVoList.add(problemVo);
             }
         }else {
@@ -120,9 +129,19 @@ public class ProblemController {
                         ProblemVo problemVo = new ProblemVo();
                         problemVo.setContent(problem.getContent());
                         problemVo.setId(problem.getId());
-                        problemVo.setAnswer(problem.getAnswer());
+                        String[] answer = (String[]) Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        problemVo.setAnswer(answer);
+                        String[] options = (String[]) Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        problemVo.setOptions(options);
+                        problemVo.setNum(answer.length);
                         problemVo.setType(problem.getType());
                         problemVo.setDifficulty(problem.getDifficulty());
+                        List<ProblemSection> problemSections = problemSectionService.list(new QueryWrapper<ProblemSection>().eq("problem_id", problem.getId()));
+                        Integer[] sections = new Integer[problemSections.size()];
+                        for (int i = 0; i < problemSections.size(); i++) {
+                            sections[i]=problemSections.get(i).getSectionId();
+                        }
+                        problemVo.setSectionIds(sections);
                         problemVoList.add(problemVo);
                         break;
                     }
