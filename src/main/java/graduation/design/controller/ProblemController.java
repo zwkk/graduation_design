@@ -107,9 +107,17 @@ public class ProblemController {
                 ProblemVo problemVo = new ProblemVo();
                 problemVo.setContent(problem.getContent());
                 problemVo.setId(problem.getId());
-                String[] answer = (String[]) Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                Object[] array = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                String[] answer = new String[array.length];
+                for (int i = 0; i < array.length; i++) {
+                    answer[i]= (String) array[i];
+                }
                 problemVo.setAnswer(answer);
-                String[] options = (String[]) Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                Object[] array1 = Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                String[] options = new String[array1.length];
+                for (int i = 0; i < array1.length; i++) {
+                    options[i]= (String) array1[i];
+                }
                 problemVo.setOptions(options);
                 problemVo.setNum(answer.length);
                 problemVo.setType(problem.getType());
@@ -129,9 +137,17 @@ public class ProblemController {
                         ProblemVo problemVo = new ProblemVo();
                         problemVo.setContent(problem.getContent());
                         problemVo.setId(problem.getId());
-                        String[] answer = (String[]) Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        Object[] array = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        String[] answer = new String[array.length];
+                        for (int i = 0; i < array.length; i++) {
+                            answer[i]= (String) array[i];
+                        }
                         problemVo.setAnswer(answer);
-                        String[] options = (String[]) Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        Object[] array1 = Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        String[] options = new String[array1.length];
+                        for (int i = 0; i < array1.length; i++) {
+                            options[i]= (String) array1[i];
+                        }
                         problemVo.setOptions(options);
                         problemVo.setNum(answer.length);
                         problemVo.setType(problem.getType());
