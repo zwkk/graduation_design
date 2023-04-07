@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +51,12 @@ public class HomeworkController {
 
     @Autowired
     StudentClassService studentClassService;
+
+    @Autowired
+    StudentAnswerService studentAnswerService;
+
+    @Autowired
+    HomeworkStudentService homeworkStudentService;
 
     @Authority({"admin","teacher","assistant"})
     @ApiOperation("布置作业,接口权限admin,teacher,assistant")
@@ -111,16 +118,19 @@ public class HomeworkController {
         homeworkService.removeById(id);
         homeworkProblemService.remove(new QueryWrapper<HomeworkProblem>().eq("homework_id",id));
         homeworkClassService.remove(new QueryWrapper<HomeworkClass>().eq("homework_id",id));
+        homeworkStudentService.remove(new QueryWrapper<HomeworkStudent>().eq("homework_id",id));
+        studentAnswerService.remove(new QueryWrapper<StudentAnswer>().eq("homework_id",id));
         return Result.success("删除成功");
     }
 
     @Authority({"admin","teacher","assistant","student"})
-    @ApiOperation("查询我的班级作业,接口权限admin,teacher,assistant,student")
+    @ApiOperation("查询我的班级作业,对于学生,还会返回作答记录以及批改情况,接口权限admin,teacher,assistant,student")
     @GetMapping("/get")
     public Result get(Integer userId){
         User user = userService.getById(userId);
         List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
         List<HomeworkVo2> homeworks = new ArrayList<>();
+        List<HomeworkVo3> studentHomeworks = new ArrayList<>();
         if(list.contains("admin")){
             List<Homework> homeworkList = homeworkService.list();
             for (Homework homework : homeworkList) {
@@ -286,40 +296,143 @@ public class HomeworkController {
                 }
             }
             for (Homework homework : homeworkList) {
-                HomeworkVo2 homeworkVo2 = new HomeworkVo2();
-                homeworkVo2.setId(homework.getId());
-                homeworkVo2.setName(homework.getName());
-                homeworkVo2.setBegin(homework.getBegin());
-                homeworkVo2.setEnd(homework.getEnd());
-                homeworkVo2.setTotalNum(0);
-                homeworkVo2.setTotalScore(0.0);
+                HomeworkVo3 homeworkVo3 = new HomeworkVo3();
+                homeworkVo3.setId(homework.getId());
+                homeworkVo3.setName(homework.getName());
+                homeworkVo3.setBegin(homework.getBegin());
+                homeworkVo3.setEnd(homework.getEnd());
+                if(LocalDateTime.now().isAfter(homework.getEnd())){
+                    homeworkVo3.setIfOverdue(1);
+                }else {
+                    homeworkVo3.setIfOverdue(0);
+                }
+                homeworkVo3.setTotalNum(0);
+                homeworkVo3.setTotalScore(0.0);
+                HomeworkStudent homeworkStudent = homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id", homework.getId()).eq("student_id", userId));
+                if(homeworkStudent==null){
+                    homeworkVo3.setIfAnswer(0);
+                    homeworkVo3.setIfCorrect(0);
+                    homeworkVo3.setScore(null);
+                    homeworkVo3.setTime(null);
+                }else {
+                    homeworkVo3.setIfAnswer(homeworkStudent.getAnswer());
+                    homeworkVo3.setIfCorrect(homeworkStudent.getCorrect());
+                    homeworkVo3.setTime(homeworkStudent.getTime());
+                    homeworkVo3.setScore(homeworkStudent.getScore());
+                }
                 List<HomeworkProblem> homeworkProblems = homeworkProblemService.list(new QueryWrapper<HomeworkProblem>().eq("homework_id", homework.getId()));
-                List<ProblemVo2> problems = new ArrayList<>();
+                List<ProblemVo3> problems = new ArrayList<>();
                 for (HomeworkProblem homeworkProblem : homeworkProblems) {
-                    ProblemVo2 problemVo2 = new ProblemVo2();
-                    problemVo2.setId(homeworkProblem.getProblemId());
-                    problemVo2.setScore(homeworkProblem.getScore());
-                    homeworkVo2.setTotalScore(homeworkVo2.getTotalScore()+Double.parseDouble(homeworkProblem.getScore()));
-                    homeworkVo2.setTotalNum(homeworkVo2.getTotalNum()+1);
+                    ProblemVo3 problemVo3 = new ProblemVo3();
+                    problemVo3.setId(homeworkProblem.getProblemId());
+                    problemVo3.setScore(homeworkProblem.getScore());
+                    homeworkVo3.setTotalScore(homeworkVo3.getTotalScore()+Double.parseDouble(homeworkProblem.getScore()));
+                    homeworkVo3.setTotalNum(homeworkVo3.getTotalNum()+1);
                     Problem problem = problemService.getById(homeworkProblem.getProblemId());
-                    problemVo2.setContent(problem.getContent());
-                    problemVo2.setType(problem.getType());
+                    problemVo3.setContent(problem.getContent());
+                    problemVo3.setType(problem.getType());
                     Object[] array1 = Arrays.asList(problem.getOptions().replaceAll("[\\[\\]]", "").split(", ")).toArray();
                     String[] options = new String[array1.length];
                     for (int i = 0; i < array1.length; i++) {
                         options[i]= (String) array1[i];
                     }
-                    problemVo2.setOptions(options);
+                    problemVo3.setOptions(options);
                     Object[] array2 = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
-                    problemVo2.setNum(array2.length);
-                    problems.add(problemVo2);
+                    problemVo3.setNum(array2.length);
+                    StudentAnswer studentAnswer = studentAnswerService.getOne(new QueryWrapper<StudentAnswer>().eq("homework_id", homework.getId()).eq("problem_id", homeworkProblem.getProblemId()).eq("student_id", userId));
+                    if(studentAnswer==null){
+                        problemVo3.setAnswers(null);
+                        problemVo3.setStudentScore(null);
+                    }else {
+                        Object[] array3 = Arrays.asList(studentAnswer.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                        String[] answers = new String[array3.length];
+                        for (int i = 0; i < array3.length; i++) {
+                            answers[i]= (String) array3[i];
+                        }
+                        problemVo3.setAnswers(answers);
+                        problemVo3.setStudentScore(studentAnswer.getScore());
+                    }
+                    problems.add(problemVo3);
                 }
-                homeworkVo2.setProblems(problems);
-                homeworks.add(homeworkVo2);
+                homeworkVo3.setProblems(problems);
+                studentHomeworks.add(homeworkVo3);
             }
-            return Result.success(homeworks);
+            return Result.success(studentHomeworks);
         }
         return Result.success(homeworks);
+    }
+
+    @Authority("student")
+    @ApiOperation("保存作答记录但不提交,接口权限student")
+    @PostMapping("/save")
+    public Result save(@RequestBody Record record){
+        studentAnswerService.remove(new QueryWrapper<StudentAnswer>().eq("student_id",record.getStudentId()).eq("homework_id",record.getHomeworkId()));
+        AnswerVo[] answers = record.getAnswers();
+        for (AnswerVo answer : answers) {
+            StudentAnswer studentAnswer = new StudentAnswer();
+            studentAnswer.setStudentId(record.getStudentId()).setHomeworkId(record.getHomeworkId()).setProblemId(answer.getProblemId()).setAnswer(Arrays.toString(answer.getAnswer())).setCorrect(0);
+            studentAnswerService.save(studentAnswer);
+        }
+        return Result.success("保存成功");
+    }
+
+    @Authority("student")
+    @ApiOperation("提交作业,接口权限student")
+    @PostMapping("/submit")
+    public Result submit(@RequestBody Record record){
+        Homework homework = homeworkService.getById(record.getHomeworkId());
+        if(LocalDateTime.now().isBefore(homework.getBegin())){
+            return Result.fail("作业未到开始日期，无法提交");
+        }
+        if(LocalDateTime.now().isAfter(homework.getEnd())){
+            return Result.fail("作业已过截止日期，无法提交");
+        }
+        studentAnswerService.remove(new QueryWrapper<StudentAnswer>().eq("student_id",record.getStudentId()).eq("homework_id",record.getHomeworkId()));
+        AnswerVo[] answers = record.getAnswers();
+        for (AnswerVo answer : answers) {
+            StudentAnswer studentAnswer = new StudentAnswer();
+            studentAnswer.setStudentId(record.getStudentId()).setHomeworkId(record.getHomeworkId()).setProblemId(answer.getProblemId()).setAnswer(Arrays.toString(answer.getAnswer()));
+            Problem problem = problemService.getById(answer.getProblemId());
+            if(problem.getType().equals("选择")||problem.getType().equals("填空")||problem.getType().equals("判断")){
+                Object[] array1 = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                String[] answer1 = new String[array1.length];
+                for (int i = 0; i < array1.length; i++) {
+                    answer1[i]= (String) array1[i];
+                }
+                String[] answer2 = answer.getAnswer();
+                int correctNum = 0;
+                for (int i = 0; i < answer2.length; i++) {
+                    if(answer2[i]!=null && answer2[i].equals(answer1[i])){
+                        correctNum++;
+                    }
+                }
+                HomeworkProblem homeworkProblem = homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id", record.getHomeworkId()).eq("problem_id", problem.getId()));
+                if(correctNum==answer1.length){
+                    studentAnswer.setCorrect(1).setScore(homeworkProblem.getScore());
+                }else {
+                    double s1 = Double.parseDouble(homeworkProblem.getScore());
+                    studentAnswer.setCorrect(1).setScore(String.format("%.1f",s1*correctNum/answer1.length));
+                }
+            }else {
+                studentAnswer.setCorrect(0).setScore(null);
+            }
+            studentAnswerService.save(studentAnswer);
+        }
+        HomeworkStudent homeworkStudent = new HomeworkStudent();
+        homeworkStudent.setHomeworkId(record.getHomeworkId()).setStudentId(record.getStudentId()).setAnswer(1).setTime(LocalDateTime.now());
+        List<StudentAnswer> list = studentAnswerService.list(new QueryWrapper<StudentAnswer>().eq("student_id", record.getStudentId()).eq("homework_id", homework.getId()).eq("correct", 1));
+        if(list.size()==homeworkProblemService.list(new QueryWrapper<HomeworkProblem>().eq("homework_id",record.getHomeworkId())).size()){
+            homeworkStudent.setCorrect(1);
+            Double sum = 0.0;
+            for (StudentAnswer studentAnswer : list) {
+                sum+=Double.parseDouble(studentAnswer.getScore());
+            }
+            homeworkStudent.setScore(String.format("%.1f",sum));
+        }else {
+            homeworkStudent.setCorrect(0).setScore(null);
+        }
+        homeworkStudentService.save(homeworkStudent);
+        return Result.success("提交成功");
     }
 
 }

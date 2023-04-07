@@ -55,7 +55,7 @@ public class ProblemController {
             problemSection.setProblemId(problem2.getId()).setSectionId(sectionId);
             problemSectionService.save(problemSection);
         }
-        return Result.success("添加成功");
+        return Result.success(problem2.getId());
     }
 
     @Authority({"admin","teacher","author"})
