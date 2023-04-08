@@ -124,7 +124,7 @@ public class HomeworkController {
     }
 
     @Authority({"admin","teacher","assistant","student"})
-    @ApiOperation("查询我的班级作业,对于学生,还会返回作答记录以及批改情况,接口权限admin,teacher,assistant,student")
+    @ApiOperation(value = "查询我的班级作业,对于学生,还会返回作答记录以及批改情况,接口权限admin,teacher,assistant,student",response = HomeworkVo3.class)
     @GetMapping("/get")
     public Result get(Integer userId){
         User user = userService.getById(userId);
@@ -436,7 +436,7 @@ public class HomeworkController {
     }
 
     @Authority({"teacher","assistant"})
-    @ApiOperation("教师助教查看本班级待批改题目列表,接口权限teacher,assistant")
+    @ApiOperation(value = "教师助教查看本班级待批改题目列表,接口权限teacher,assistant",response = ProblemVo4.class)
     @GetMapping("/list")
     public Result list(Integer userId){
         User user = userService.getById(userId);

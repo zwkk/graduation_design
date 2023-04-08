@@ -32,9 +32,9 @@ public class StudentPracticeAnswer implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("练习id")
-    @TableField("practice_id")
-    private Integer practiceId;
+    @ApiModelProperty("节id")
+    @TableField("section_id")
+    private Integer sectionId;
 
     @ApiModelProperty("题目id")
     @TableField("problem_id")
@@ -52,9 +52,9 @@ public class StudentPracticeAnswer implements Serializable {
     @TableField("score")
     private String score;
 
-    @ApiModelProperty("是否作答")
-    @TableField("if_answer")
-    private Integer ifAnswer;
+    @ApiModelProperty("是否正确")
+    @TableField("if_correct")
+    private Integer ifCorrect;
 
 
 }
