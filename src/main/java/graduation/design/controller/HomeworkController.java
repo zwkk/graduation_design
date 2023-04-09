@@ -92,7 +92,7 @@ public class HomeworkController {
     public Result modify(@RequestBody HomeworkVo homeworkVo){
         Homework homework = homeworkService.getById(homeworkVo.getId());
         homework.setName(homeworkVo.getName()).setBegin(homeworkVo.getBegin()).setEnd(homeworkVo.getEnd());
-        homeworkService.save(homework);
+        homeworkService.saveOrUpdate(homework);
         ProblemScore[] problemScores = homeworkVo.getProblemScores();
         if(problemScores.length==0) return Result.fail("题目列表不能为空");
         homeworkProblemService.remove(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()));
