@@ -399,7 +399,7 @@ public class HomeworkController {
             StudentAnswer studentAnswer = new StudentAnswer();
             studentAnswer.setStudentId(record.getStudentId()).setHomeworkId(record.getHomeworkId()).setProblemId(answer.getProblemId()).setAnswer(Arrays.toString(answer.getAnswer()));
             Problem problem = problemService.getById(answer.getProblemId());
-            if(problem.getType().equals("选择")||problem.getType().equals("填空")||problem.getType().equals("判断")){
+            if(problem.getType().equals("单选")||problem.getType().equals("填空")||problem.getType().equals("判断")){
                 Object[] array1 = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
                 String[] answer1 = new String[array1.length];
                 for (int i = 0; i < array1.length; i++) {
@@ -418,6 +418,38 @@ public class HomeworkController {
                 }else {
                     double s1 = Double.parseDouble(homeworkProblem.getScore());
                     studentAnswer.setCorrect(1).setScore(String.format("%.1f",s1*correctNum/answer1.length));
+                }
+            }else if(problem.getType().equals("多选")){
+                Object[] array1 = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
+                String[] answer1 = new String[array1.length];
+                for (int i = 0; i < array1.length; i++) {
+                    answer1[i]= (String) array1[i];
+                }
+                String[] answer2 = answer.getAnswer();
+                int wrong = 0;
+                int correctNum = 0;
+                for (int i = 0; i < answer2.length; i++) {
+                    int flag=0;
+                    for (int j = 0; j < answer1.length; j++) {
+                        if(answer1[j].equals(answer2[i])){
+                            correctNum++;
+                            flag=1;
+                            break;
+                        }
+                    }
+                    if(flag==0){
+                        wrong=1;
+                        break;
+                    }
+                }
+                HomeworkProblem homeworkProblem = homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id", record.getHomeworkId()).eq("problem_id", problem.getId()));
+                if(correctNum==answer1.length && wrong==0){
+                    studentAnswer.setCorrect(1).setScore(homeworkProblem.getScore());
+                }else if(correctNum>0 && wrong==0){
+                    double s1 = Double.parseDouble(homeworkProblem.getScore());
+                    studentAnswer.setCorrect(1).setScore(String.format("%.1f",s1/2));
+                }else {
+                    studentAnswer.setCorrect(1).setScore("0.0");
                 }
             }else {
                 studentAnswer.setCorrect(0).setScore(null);
