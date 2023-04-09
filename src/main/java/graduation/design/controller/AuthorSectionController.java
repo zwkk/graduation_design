@@ -146,7 +146,7 @@ public class AuthorSectionController {
             editVo.setChapterId(chapter.getId());
             editVo.setTitle(chapter.getTitle());
             List<SectionEditVo> sectionEditVoList = new ArrayList<>();
-            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()));
+            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()).orderByAsc("section_order"));
             for (Section section : sectionList) {
                 SectionEditVo sectionEditVo = new SectionEditVo();
                 sectionEditVo.setSectionId(section.getId());

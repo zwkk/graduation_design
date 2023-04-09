@@ -40,5 +40,8 @@ public class Section implements Serializable {
     @TableField("chapter_id")
     private Integer chapterId;
 
+    @ApiModelProperty("在所属章中的节顺序,比如1则排在第一位")
+    @TableField("section_order")
+    private Integer sectionOrder;
 
 }

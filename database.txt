@@ -43,3 +43,7 @@ student_practice_answer表:
     字段practice_id名称改为section_id;
     字段answer类型改为text
     字段if_answer名称改为if_correct
+
+4.9
+section表:
+    增加字段section_order，类型int

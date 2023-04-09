@@ -87,7 +87,7 @@ public class ChapterController {
             ChapterSectionVo chapterSectionVo = new ChapterSectionVo();
             chapterSectionVo.setId(chapter.getId());
             chapterSectionVo.setTitle(chapter.getTitle());
-            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()));
+            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()).orderByAsc("section_order"));
             chapterSectionVo.setSectionList(sectionList);
             chapterSectionVoList.add(chapterSectionVo);
         }

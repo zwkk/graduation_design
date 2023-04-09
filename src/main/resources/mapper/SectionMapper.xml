@@ -7,11 +7,12 @@
         <id column="id" property="id" />
         <result column="title" property="title" />
         <result column="chapter_id" property="chapterId" />
+        <result column="section_order" property="sectionOrder" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, chapter_id
+        id, title, chapter_id, section_order
     </sql>
 
 </mapper>
