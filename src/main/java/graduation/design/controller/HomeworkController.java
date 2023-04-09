@@ -366,6 +366,9 @@ public class HomeworkController {
     @ApiOperation("保存作答记录但不提交,接口权限student")
     @PostMapping("/save")
     public Result save(@RequestBody Record record){
+        if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",record.getHomeworkId()).eq("student_id",record.getStudentId()))!=null){
+            return Result.fail("该作业已提交，请勿重复作答");
+        }
         studentAnswerService.remove(new QueryWrapper<StudentAnswer>().eq("student_id",record.getStudentId()).eq("homework_id",record.getHomeworkId()));
         AnswerVo[] answers = record.getAnswers();
         for (AnswerVo answer : answers) {
@@ -380,6 +383,9 @@ public class HomeworkController {
     @ApiOperation("提交作业,接口权限student")
     @PostMapping("/submit")
     public Result submit(@RequestBody Record record){
+        if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",record.getHomeworkId()).eq("student_id",record.getStudentId()))!=null){
+            return Result.fail("该作业已提交，请勿重复作答");
+        }
         Homework homework = homeworkService.getById(record.getHomeworkId());
         if(LocalDateTime.now().isBefore(homework.getBegin())){
             return Result.fail("作业未到开始日期，无法提交");
