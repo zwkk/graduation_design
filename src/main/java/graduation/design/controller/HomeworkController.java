@@ -674,4 +674,79 @@ public class HomeworkController {
         return Result.success("批改成功");
     }
 
+    @Authority({"teacher","assistant"})
+    @ApiOperation("所在班级未提交作业学生列表,不传homeworkId则查询所有作业,接口权限teacher,assistant")
+    @GetMapping("/unfinished")
+    public Result unfinished(Integer userId,Integer homeworkId){
+        User user = userService.getById(userId);
+        List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
+        List<StudentVo> students = new ArrayList<>();
+        if(list.contains("teacher")){
+            List<TeacherClass> teacherClasses = teacherClassService.list(new QueryWrapper<TeacherClass>().eq("teacher_id", userId));
+            if(teacherClasses.size()==0){
+                return Result.success(students);
+            }
+            Integer[] classIds = new Integer[teacherClasses.size()];
+            for (int i = 0; i < teacherClasses.size(); i++) {
+                classIds[i]=teacherClasses.get(i).getClassId();
+            }
+            List<StudentClass> studentClasses = studentClassService.list(new QueryWrapper<StudentClass>().in("class_id", classIds));
+            List<HomeworkClass> homeworkClasses = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
+            for (StudentClass studentClass : studentClasses) {
+                for (HomeworkClass homeworkClass : homeworkClasses) {
+                    if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
+                        continue;
+                    }
+                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
+                        continue;
+                    }
+                    if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){
+                        StudentVo studentVo = new StudentVo();
+                        User student = userService.getById(studentClass.getStudentId());
+                        studentVo.setStudentId(student.getId());
+                        studentVo.setName(student.getName());
+                        studentVo.setLastLogin(student.getLastLogin());
+                        Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                        studentVo.setHomeworkId(homework.getId());
+                        studentVo.setHomeworkName(homework.getName());
+                        students.add(studentVo);
+                    }
+                }
+            }
+        }else if(list.contains("assistant")){
+            List<AssistantClass> assistantClasses = assistantClassService.list(new QueryWrapper<AssistantClass>().eq("assistant_id", userId));
+            if(assistantClasses.size()==0){
+                return Result.success(students);
+            }
+            Integer[] classIds = new Integer[assistantClasses.size()];
+            for (int i = 0; i < assistantClasses.size(); i++) {
+                classIds[i]=assistantClasses.get(i).getClassId();
+            }
+            List<StudentClass> studentClasses = studentClassService.list(new QueryWrapper<StudentClass>().in("class_id", classIds));
+            List<HomeworkClass> homeworkClasses = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
+            for (StudentClass studentClass : studentClasses) {
+                for (HomeworkClass homeworkClass : homeworkClasses) {
+                    if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
+                        continue;
+                    }
+                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
+                        continue;
+                    }
+                    if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){
+                        StudentVo studentVo = new StudentVo();
+                        User student = userService.getById(studentClass.getStudentId());
+                        studentVo.setStudentId(student.getId());
+                        studentVo.setName(student.getName());
+                        studentVo.setLastLogin(student.getLastLogin());
+                        Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                        studentVo.setHomeworkId(homework.getId());
+                        studentVo.setHomeworkName(homework.getName());
+                        students.add(studentVo);
+                    }
+                }
+            }
+        }
+        return Result.success(students);
+    }
+
 }
