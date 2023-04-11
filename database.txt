@@ -47,3 +47,7 @@ student_practice_answer表:
 4.9
 section表:
     增加字段section_order，类型int
+
+4.11
+problem表:
+    增加字段uses(用途),类型varchar(255),字段内容为练习/作业/练习及作业(中文)

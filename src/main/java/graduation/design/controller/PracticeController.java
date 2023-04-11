@@ -46,10 +46,13 @@ public class PracticeController {
         List<ProblemSection> problemSections = problemSectionService.list(new QueryWrapper<ProblemSection>().eq("section_id", sectionId));
         List<PracticeVo> practices = new ArrayList<>();
         for (ProblemSection problemSection : problemSections) {
+            if(problemService.getById(problemSection.getProblemId()).getUses()!=null && problemService.getById(problemSection.getProblemId()).getUses().equals("作业")){
+                continue;
+            }
             PracticeVo practiceVo = new PracticeVo();
             practiceVo.setProblemId(problemSection.getProblemId());
             Problem problem = problemService.getById(problemSection.getProblemId());
-            if(!(problem.getType().equals("选择") || problem.getType().equals("填空") || problem.getType().equals("判断"))){
+            if(!(problem.getType().equals("单选") || problem.getType().equals("多选") || problem.getType().equals("填空") || problem.getType().equals("判断"))){
                 continue;
             }
             practiceVo.setContent(problem.getContent());
@@ -101,6 +104,8 @@ public class PracticeController {
                 answer[i]= (String) array[i];
             }
             String[] studentAnswer = submitPracticeVo.getStudentAnswer();
+            Arrays.sort(answer);
+            Arrays.sort(studentAnswer);
             if(studentAnswer.length!=answer.length){
                 studentPracticeAnswer.setIfCorrect(0);
             }else {

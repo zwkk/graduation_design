@@ -45,6 +45,11 @@ public class ProblemController {
     public Result add(@RequestBody ProblemVo problemVo){
         Problem problem = new Problem();
         problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
+        if(problemVo.getUses()==null || problemVo.getUses().length==2 || problemVo.getUses().length==0){
+            problem.setUses("练习及作业");
+        }else if(problemVo.getUses().length==1){
+            problem.setUses(problemVo.getUses()[0]);
+        }
         Problem problem1 = problemService.getOne(new QueryWrapper<Problem>().eq("content", problem.getContent()).eq("del",0));
         if(problem1!=null) return Result.fail("该题目已存在");
         problemService.save(problem);
@@ -64,6 +69,11 @@ public class ProblemController {
     public Result modify(@RequestBody ProblemVo problemVo){
         Problem problem = problemService.getById(problemVo.getId());
         problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
+        if(problemVo.getUses()==null || problemVo.getUses().length==2 || problemVo.getUses().length==0){
+            problem.setUses("练习及作业");
+        }else if(problemVo.getUses().length==1){
+            problem.setUses(problemVo.getUses()[0]);
+        }
         problemService.saveOrUpdate(problem);
         problemSectionService.remove(new QueryWrapper<ProblemSection>().eq("problem_id",problemVo.getId()));
         Integer[] sectionIds = problemVo.getSectionIds();
@@ -82,7 +92,6 @@ public class ProblemController {
         Problem problem = problemService.getById(problemId);
         problem.setDel(1);
         problemService.saveOrUpdate(problem);
-        problemSectionService.remove(new QueryWrapper<ProblemSection>().eq("problem_id",problemId));
         return Result.success("删除成功");
     }
 
@@ -90,15 +99,31 @@ public class ProblemController {
     @ApiOperation(value = "根据条件获取题库列表,不带条件则获取全部,接口权限admin,author,teacher",response = ProblemVo.class)
     @PostMapping("/list")
     public Result list(@RequestBody ConditionVo conditionVo){
-        List<Problem> problems;
+        List<Problem> problems1;
         if((conditionVo.getType()==null || conditionVo.getType().length==0)&&(conditionVo.getDifficulty()==null || conditionVo.getDifficulty().length==0)){
-            problems = problemService.list(new QueryWrapper<Problem>().eq("del", 0));
+            problems1 = problemService.list(new QueryWrapper<Problem>().eq("del", 0));
         }else if(conditionVo.getType()==null || conditionVo.getType().length==0){
-            problems = problemService.list(new QueryWrapper<Problem>().in("difficulty",conditionVo.getDifficulty()).eq("del", 0));
+            problems1 = problemService.list(new QueryWrapper<Problem>().in("difficulty",conditionVo.getDifficulty()).eq("del", 0));
         }else if(conditionVo.getDifficulty()==null || conditionVo.getDifficulty().length==0){
-            problems = problemService.list(new QueryWrapper<Problem>().in("type",conditionVo.getType()).eq("del", 0));
+            problems1 = problemService.list(new QueryWrapper<Problem>().in("type",conditionVo.getType()).eq("del", 0));
         }else{
-            problems = problemService.list(new QueryWrapper<Problem>().in("type",conditionVo.getType()).in("difficulty",conditionVo.getDifficulty()).eq("del", 0));
+            problems1 = problemService.list(new QueryWrapper<Problem>().in("type",conditionVo.getType()).in("difficulty",conditionVo.getDifficulty()).eq("del", 0));
+        }
+        List<Problem> problems = new ArrayList<>();
+        if(conditionVo.getUses()==null || conditionVo.getUses().length==0 || conditionVo.getUses().length==2){
+            problems = problems1;
+        }else if(conditionVo.getUses()[0].equals("作业")){
+            for (Problem problem : problems1) {
+                if("作业".equals(problem.getUses()) || "练习及作业".equals(problem.getUses()) || problem.getUses()==null){
+                    problems.add(problem);
+                }
+            }
+        }else if(conditionVo.getUses()[0].equals("练习")){
+            for (Problem problem : problems1) {
+                if("练习".equals(problem.getUses()) || "练习及作业".equals(problem.getUses()) || problem.getUses()==null){
+                    problems.add(problem);
+                }
+            }
         }
         List<ProblemVo> problemVoList = new ArrayList<>();
         Integer[] sectionIds = conditionVo.getSectionIds();
@@ -107,6 +132,16 @@ public class ProblemController {
                 ProblemVo problemVo = new ProblemVo();
                 problemVo.setContent(problem.getContent());
                 problemVo.setId(problem.getId());
+                if(problem.getUses()==null || problem.getUses().equals("练习及作业")){
+                    String[] uses = new String[2];
+                    uses[0]="练习";
+                    uses[1]="作业";
+                    problemVo.setUses(uses);
+                }else{
+                    String[] uses = new String[1];
+                    uses[0]=problem.getUses();
+                    problemVo.setUses(uses);
+                }
                 Object[] array = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
                 String[] answer = new String[array.length];
                 for (int i = 0; i < array.length; i++) {
@@ -137,6 +172,16 @@ public class ProblemController {
                         ProblemVo problemVo = new ProblemVo();
                         problemVo.setContent(problem.getContent());
                         problemVo.setId(problem.getId());
+                        if(problem.getUses()==null || problem.getUses().equals("练习及作业")){
+                            String[] uses = new String[2];
+                            uses[0]="练习";
+                            uses[1]="作业";
+                            problemVo.setUses(uses);
+                        }else{
+                            String[] uses = new String[1];
+                            uses[0]=problem.getUses();
+                            problemVo.setUses(uses);
+                        }
                         Object[] array = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
                         String[] answer = new String[array.length];
                         for (int i = 0; i < array.length; i++) {

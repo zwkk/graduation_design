@@ -76,6 +76,9 @@ public class HomeworkController {
             if(homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()).eq("problem_id",problemScore.getId()))!=null){
                 continue;
             }
+            if(problemService.getById(problemScore.getId()).getUses()!=null && problemService.getById(problemScore.getId()).getUses().equals("练习")){
+                continue;
+            }
             HomeworkProblem homeworkProblem = new HomeworkProblem();
             homeworkProblem.setHomeworkId(homework1.getId()).setProblemId(problemScore.getId()).setScore(String.format("%.1f",problemScore.getScore()));
             homeworkProblemService.save(homeworkProblem);
@@ -104,6 +107,9 @@ public class HomeworkController {
         homeworkProblemService.remove(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()));
         for (ProblemScore problemScore : problemScores) {
             if(homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()).eq("problem_id",problemScore.getId()))!=null){
+                continue;
+            }
+            if(problemService.getById(problemScore.getId()).getUses()!=null && problemService.getById(problemScore.getId()).getUses().equals("练习")){
                 continue;
             }
             HomeworkProblem homeworkProblem = new HomeworkProblem();

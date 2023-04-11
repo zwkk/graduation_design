@@ -11,11 +11,12 @@
         <result column="difficulty" property="difficulty" />
         <result column="del" property="del" />
         <result column="options" property="options" />
+        <result column="uses" property="uses" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, content, answer, type, difficulty, del, options
+        id, content, answer, type, difficulty, del, options, uses
     </sql>
 
 </mapper>

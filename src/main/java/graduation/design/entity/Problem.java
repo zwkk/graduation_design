@@ -55,4 +55,8 @@ public class Problem implements Serializable {
     @ApiModelProperty("选择题选项")
     @TableField("options")
     private String options;
+
+    @ApiModelProperty("用途")
+    @TableField("uses")
+    private String uses;
 }

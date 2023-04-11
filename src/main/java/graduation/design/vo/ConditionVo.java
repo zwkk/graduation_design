@@ -17,4 +17,7 @@ public class ConditionVo {
     @ApiModelProperty("相关节id")
     private Integer[] sectionIds;
 
+    @ApiModelProperty("练习/作业")
+    private String[] uses;
+
 }
