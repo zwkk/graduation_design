@@ -73,12 +73,18 @@ public class HomeworkController {
         ProblemScore[] problemScores = homeworkVo.getProblemScores();
         if(problemScores.length==0) return Result.fail("题目列表不能为空");
         for (ProblemScore problemScore : problemScores) {
+            if(homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()).eq("problem_id",problemScore.getId()))!=null){
+                continue;
+            }
             HomeworkProblem homeworkProblem = new HomeworkProblem();
             homeworkProblem.setHomeworkId(homework1.getId()).setProblemId(problemScore.getId()).setScore(String.format("%.1f",problemScore.getScore()));
             homeworkProblemService.save(homeworkProblem);
         }
         Integer[] classes = homeworkVo.getClasses();
         for (Integer classId : classes) {
+            if(homeworkClassService.getOne(new QueryWrapper<HomeworkClass>().eq("homework_id",homework.getId()).eq("class_id",classId))!=null){
+                continue;
+            }
             HomeworkClass homeworkClass = new HomeworkClass();
             homeworkClass.setHomeworkId(homework1.getId()).setClassId(classId);
             homeworkClassService.save(homeworkClass);
@@ -97,6 +103,9 @@ public class HomeworkController {
         if(problemScores.length==0) return Result.fail("题目列表不能为空");
         homeworkProblemService.remove(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()));
         for (ProblemScore problemScore : problemScores) {
+            if(homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()).eq("problem_id",problemScore.getId()))!=null){
+                continue;
+            }
             HomeworkProblem homeworkProblem = new HomeworkProblem();
             homeworkProblem.setHomeworkId(homework.getId()).setProblemId(problemScore.getId()).setScore(String.format("%.1f",problemScore.getScore()));
             homeworkProblemService.save(homeworkProblem);
@@ -104,6 +113,9 @@ public class HomeworkController {
         homeworkClassService.remove(new QueryWrapper<HomeworkClass>().eq("homework_id",homework.getId()));
         Integer[] classes = homeworkVo.getClasses();
         for (Integer classId : classes) {
+            if(homeworkClassService.getOne(new QueryWrapper<HomeworkClass>().eq("homework_id",homework.getId()).eq("class_id",classId))!=null){
+                continue;
+            }
             HomeworkClass homeworkClass = new HomeworkClass();
             homeworkClass.setHomeworkId(homework.getId()).setClassId(classId);
             homeworkClassService.save(homeworkClass);
