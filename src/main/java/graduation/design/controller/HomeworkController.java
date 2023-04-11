@@ -493,19 +493,24 @@ public class HomeworkController {
 
     @Authority({"teacher","assistant"})
     @ApiOperation(value = "教师助教查看本班级待批改题目列表,接口权限teacher,assistant",response = ProblemVo4.class)
-    @GetMapping("/list")
-    public Result list(Integer userId){
-        User user = userService.getById(userId);
+    @PostMapping("/list")
+    public Result list(@RequestBody SelectVo selectVo){
+        User user = userService.getById(selectVo.getUserId());
         List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
         List<ProblemVo4> problems = new ArrayList<>();
         if(list.contains("teacher")){
-            List<TeacherClass> teacherClasses = teacherClassService.list(new QueryWrapper<TeacherClass>().eq("teacher_id", userId));
+            List<TeacherClass> teacherClasses = teacherClassService.list(new QueryWrapper<TeacherClass>().eq("teacher_id", selectVo.getUserId()));
             if(teacherClasses.size()==0){
                 return Result.success(problems);
             }
-            Integer[] classIds = new Integer[teacherClasses.size()];
-            for (int i = 0; i < teacherClasses.size(); i++) {
-                classIds[i]=teacherClasses.get(i).getClassId();
+            Integer[] classIds;
+            if(selectVo.getClassId()==null || selectVo.getClassId().length==0){
+                classIds = new Integer[teacherClasses.size()];
+                for (int i = 0; i < teacherClasses.size(); i++) {
+                    classIds[i]=teacherClasses.get(i).getClassId();
+                }
+            }else {
+                classIds = selectVo.getClassId();
             }
             List<HomeworkClass> classes = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
             Integer[] homeworks2 = new Integer[classes.size()];
@@ -522,7 +527,28 @@ public class HomeworkController {
             for (Homework homework : homeworkList) {
                 List<StudentAnswer> studentAnswers = studentAnswerService.list(new QueryWrapper<StudentAnswer>().eq("homework_id", homework.getId()).eq("correct", 0));
                 for (StudentAnswer studentAnswer : studentAnswers) {
+                    if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homework.getId()).eq("student_id",studentAnswer.getStudentId()))==null){
+                        continue;
+                    }
                     ProblemVo4 problemVo4 = new ProblemVo4();
+                    if(selectVo.getHomeworkId()!=null && selectVo.getHomeworkId().length!=0){
+                        List<Integer> list1 = Arrays.asList(selectVo.getHomeworkId());
+                        if(!list1.contains(studentAnswer.getHomeworkId())){
+                            continue;
+                        }
+                    }
+                    if(selectVo.getProblemId()!=null && selectVo.getProblemId().length!=0){
+                        List<Integer> list1 = Arrays.asList(selectVo.getProblemId());
+                        if(!list1.contains(studentAnswer.getProblemId())){
+                            continue;
+                        }
+                    }
+                    if(selectVo.getStudentId()!=null && selectVo.getStudentId().length!=0){
+                        List<Integer> list1 = Arrays.asList(selectVo.getStudentId());
+                        if(!list1.contains(studentAnswer.getStudentId())){
+                            continue;
+                        }
+                    }
                     problemVo4.setHomeworkId(studentAnswer.getHomeworkId());
                     problemVo4.setProblemId(studentAnswer.getProblemId());
                     problemVo4.setStudentId(studentAnswer.getStudentId());
@@ -547,53 +573,7 @@ public class HomeworkController {
                 }
             }
         }else if(list.contains("assistant")){
-            List<AssistantClass> assistantClasses = assistantClassService.list(new QueryWrapper<AssistantClass>().eq("assistant_id", userId));
-            if(assistantClasses.size()==0){
-                return Result.success(problems);
-            }
-            Integer[] classIds = new Integer[assistantClasses.size()];
-            for (int i = 0; i < assistantClasses.size(); i++) {
-                classIds[i]=assistantClasses.get(i).getClassId();
-            }
-            List<HomeworkClass> classes = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
-            Integer[] homeworks2 = new Integer[classes.size()];
-            for (int i = 0; i < classes.size(); i++) {
-                homeworks2[i]=classes.get(i).getHomeworkId();
-            }
-            List<Homework> homeworkList2 = homeworkService.list(new QueryWrapper<Homework>().in("id", homeworks2));
-            List<Homework> homeworkList = new ArrayList<>();
-            for (Homework homework : homeworkList2) {
-                if(!homeworkList.contains(homework)){
-                    homeworkList.add(homework);
-                }
-            }
-            for (Homework homework : homeworkList) {
-                List<StudentAnswer> studentAnswers = studentAnswerService.list(new QueryWrapper<StudentAnswer>().eq("homework_id", homework.getId()).eq("correct", 0));
-                for (StudentAnswer studentAnswer : studentAnswers) {
-                    ProblemVo4 problemVo4 = new ProblemVo4();
-                    problemVo4.setHomeworkId(studentAnswer.getHomeworkId());
-                    problemVo4.setProblemId(studentAnswer.getProblemId());
-                    problemVo4.setStudentId(studentAnswer.getStudentId());
-                    Problem problem = problemService.getById(studentAnswer.getProblemId());
-                    problemVo4.setContent(problem.getContent());
-                    problemVo4.setType(problem.getType());
-                    Object[] array1 = Arrays.asList(problem.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
-                    String[] answers = new String[array1.length];
-                    for (int i = 0; i < array1.length; i++) {
-                        answers[i]= (String) array1[i];
-                    }
-                    problemVo4.setAnswers(answers);
-                    HomeworkProblem homeworkProblem = homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id", studentAnswer.getHomeworkId()).eq("problem_id", studentAnswer.getProblemId()));
-                    problemVo4.setScore(homeworkProblem.getScore());
-                    Object[] array2 = Arrays.asList(studentAnswer.getAnswer().replaceAll("[\\[\\]]", "").split(", ")).toArray();
-                    String[] studentAnswers2 = new String[array2.length];
-                    for (int i = 0; i < array2.length; i++) {
-                        studentAnswers2[i]= (String) array2[i];
-                    }
-                    problemVo4.setStudentAnswers(studentAnswers2);
-                    problems.add(problemVo4);
-                }
-            }
+
         }
         return Result.success(problems);
     }
