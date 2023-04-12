@@ -1,6 +1,6 @@
 package graduation.design.dao;
 
-import graduation.design.entity.NoticeStudent;
+import graduation.design.entity.NoticeUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023年03月12日
  */
 @Mapper
-public interface NoticeStudentMapper extends BaseMapper<NoticeStudent> {
+public interface NoticeUserMapper extends BaseMapper<NoticeUser> {
 
 }

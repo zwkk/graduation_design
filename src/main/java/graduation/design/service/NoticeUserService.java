@@ -1,6 +1,6 @@
 package graduation.design.service;
 
-import graduation.design.entity.NoticeStudent;
+import graduation.design.entity.NoticeUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author zwk
  * @since 2023年03月12日
  */
-public interface NoticeStudentService extends IService<NoticeStudent> {
+public interface NoticeUserService extends IService<NoticeUser> {
 
 }

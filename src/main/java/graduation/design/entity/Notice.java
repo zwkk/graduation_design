@@ -45,5 +45,9 @@ public class Notice implements Serializable {
     @TableField("time")
     private LocalDateTime time;
 
+    @ApiModelProperty("发布者id")
+    @TableField("user_id")
+    private Integer userId;
+
 
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -22,9 +24,9 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("notice_student")
-@ApiModel(value = "NoticeStudent对象", description = "通知学生关联表")
-public class NoticeStudent implements Serializable {
+@TableName("notice_user")
+@ApiModel(value = "NoticeUser对象", description = "通知用户关联表")
+public class NoticeUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -36,13 +38,17 @@ public class NoticeStudent implements Serializable {
     @TableField("notice_id")
     private Integer noticeId;
 
-    @ApiModelProperty("学生id")
-    @TableField("student_id")
-    private Integer studentId;
+    @ApiModelProperty("用户id")
+    @TableField("user_id")
+    private Integer userId;
 
     @ApiModelProperty("是否收到")
     @TableField("receive")
     private Integer receive;
+
+    @ApiModelProperty("确认时间")
+    @TableField("receive_time")
+    private LocalDateTime receiveTime;
 
 
 }

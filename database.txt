@@ -51,3 +51,11 @@ section表:
 4.11
 problem表:
     增加字段uses(用途),类型varchar(255),字段内容为练习/作业/练习及作业(中文)
+
+4.12
+notice表:
+    增加字段user_id(发布者id),类型int
+notice_student表:
+    表名更改为notice_user
+    字段student_id改名为user_id
+    新增字段receive_time,类型datetime

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2023年03月12日
  */
 @RestController
-@RequestMapping("/noticeStudent")
-public class NoticeStudentController {
+@RequestMapping("/noticeUser")
+public class NoticeUserController {
 
 }

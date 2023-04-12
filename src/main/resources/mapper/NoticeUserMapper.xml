@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="graduation.design.dao.NoticeStudentMapper">
+<mapper namespace="NoticeUserMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="graduation.design.entity.NoticeStudent">
+    <resultMap id="BaseResultMap" type="graduation.design.entity.NoticeUser">
         <id column="id" property="id" />
         <result column="notice_id" property="noticeId" />
-        <result column="student_id" property="studentId" />
+        <result column="user_id" property="userId" />
         <result column="receive" property="receive" />
+        <result column="receive_time" property="receiveTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, notice_id, student_id, receive
+        id, notice_id, user_id, receive, receive_time
     </sql>
 
 </mapper>

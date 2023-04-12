@@ -8,6 +8,7 @@
         <result column="title" property="title" />
         <result column="content" property="content" />
         <result column="time" property="time" />
+        <result column="user_id" property="userId" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
