@@ -43,6 +43,7 @@ public class NoticeController {
     @ApiOperation("发布通知,接口权限admin,teacher,assistant")
     @PostMapping("/add")
     public Result add(@RequestBody NoticeVo noticeVo){
+        noticeVo.setId(null);
         Notice notice = new Notice();
         if(noticeService.getOne(new QueryWrapper<Notice>().eq("title",noticeVo.getTitle()))!=null){
             return Result.fail("该通知已存在");
