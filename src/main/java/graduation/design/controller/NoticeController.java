@@ -105,7 +105,23 @@ public class NoticeController {
     @ApiOperation("获取我发布的通知列表,接口权限admin,teacher,assistant")
     @GetMapping("/publish")
     public Result publish(Integer userId){
-        List<Notice> notices = noticeService.list(new QueryWrapper<Notice>().eq("user_id", userId));
+        List<Notice> noticeList = noticeService.list(new QueryWrapper<Notice>().eq("user_id", userId));
+        List<NoticeVo3> notices = new ArrayList<>();
+        for (Notice notice : noticeList) {
+            NoticeVo3 noticeVo3 = new NoticeVo3();
+            noticeVo3.setId(notice.getId());
+            noticeVo3.setUserId(notice.getUserId());
+            noticeVo3.setTitle(notice.getTitle());
+            noticeVo3.setContent(notice.getContent());
+            noticeVo3.setTime(notice.getTime());
+            List<NoticeUser> noticeUsers = noticeUserService.list(new QueryWrapper<NoticeUser>().eq("notice_id", notice.getId()));
+            Integer[] userIds = new Integer[noticeUsers.size()];
+            for (int i = 0; i < noticeUsers.size(); i++) {
+                userIds[i]=noticeUsers.get(i).getUserId();
+            }
+            noticeVo3.setUserIds(userIds);
+            notices.add(noticeVo3);
+        }
         return Result.success(notices);
     }
 
