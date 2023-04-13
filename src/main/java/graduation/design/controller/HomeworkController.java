@@ -749,4 +749,113 @@ public class HomeworkController {
         return Result.success(students);
     }
 
+    @Authority({"teacher","assistant"})
+    @ApiOperation("所在班级学生作业状态列表,不传homeworkId则查询所有作业,接口权限teacher,assistant")
+    @GetMapping("/students")
+    public Result students(Integer userId,Integer homeworkId){
+        User user = userService.getById(userId);
+        List<String> list = Arrays.asList(user.getRoleList().replaceAll("[\\[\\]]", "").split(", "));
+        List<StudentVo2> students = new ArrayList<>();
+        if(list.contains("teacher")){
+            List<TeacherClass> teacherClasses = teacherClassService.list(new QueryWrapper<TeacherClass>().eq("teacher_id", userId));
+            if(teacherClasses.size()==0){
+                return Result.success(students);
+            }
+            Integer[] classIds = new Integer[teacherClasses.size()];
+            for (int i = 0; i < teacherClasses.size(); i++) {
+                classIds[i]=teacherClasses.get(i).getClassId();
+            }
+            List<StudentClass> studentClasses = studentClassService.list(new QueryWrapper<StudentClass>().in("class_id", classIds));
+            List<HomeworkClass> homeworkClasses = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
+            for (StudentClass studentClass : studentClasses) {
+                for (HomeworkClass homeworkClass : homeworkClasses) {
+                    if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
+                        continue;
+                    }
+                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
+                        continue;
+                    }
+                    if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){
+                        StudentVo2 studentVo = new StudentVo2();
+                        User student = userService.getById(studentClass.getStudentId());
+                        studentVo.setStudentId(student.getId());
+                        studentVo.setName(student.getName());
+                        studentVo.setLastLogin(student.getLastLogin());
+                        Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                        studentVo.setHomeworkId(homework.getId());
+                        studentVo.setHomeworkName(homework.getName());
+                        studentVo.setStatus("未提交");
+                        students.add(studentVo);
+                        continue;
+                    }
+                    HomeworkStudent homeworkStudent = homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id", homeworkClass.getHomeworkId()).eq("student_id", studentClass.getStudentId()));
+                    StudentVo2 studentVo = new StudentVo2();
+                    User student = userService.getById(studentClass.getStudentId());
+                    studentVo.setStudentId(student.getId());
+                    studentVo.setName(student.getName());
+                    studentVo.setLastLogin(student.getLastLogin());
+                    Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                    studentVo.setHomeworkId(homework.getId());
+                    studentVo.setHomeworkName(homework.getName());
+                    if(homeworkStudent.getCorrect()==0){
+                        studentVo.setStatus("已提交");
+                    }else if(homeworkStudent.getCorrect()==1){
+                        studentVo.setStatus("已批改");
+                    }
+                    students.add(studentVo);
+                }
+            }
+        }else if(list.contains("assistant")){
+            List<AssistantClass> assistantClasses = assistantClassService.list(new QueryWrapper<AssistantClass>().eq("assistant_id", userId));
+            if(assistantClasses.size()==0){
+                return Result.success(students);
+            }
+            Integer[] classIds = new Integer[assistantClasses.size()];
+            for (int i = 0; i < assistantClasses.size(); i++) {
+                classIds[i]=assistantClasses.get(i).getClassId();
+            }
+            List<StudentClass> studentClasses = studentClassService.list(new QueryWrapper<StudentClass>().in("class_id", classIds));
+            List<HomeworkClass> homeworkClasses = homeworkClassService.list(new QueryWrapper<HomeworkClass>().in("class_id", classIds));
+            for (StudentClass studentClass : studentClasses) {
+                for (HomeworkClass homeworkClass : homeworkClasses) {
+                    if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
+                        continue;
+                    }
+                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
+                        continue;
+                    }
+                    if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){
+                        StudentVo2 studentVo = new StudentVo2();
+                        User student = userService.getById(studentClass.getStudentId());
+                        studentVo.setStudentId(student.getId());
+                        studentVo.setName(student.getName());
+                        studentVo.setLastLogin(student.getLastLogin());
+                        Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                        studentVo.setHomeworkId(homework.getId());
+                        studentVo.setHomeworkName(homework.getName());
+                        studentVo.setStatus("未提交");
+                        students.add(studentVo);
+                        continue;
+                    }
+                    HomeworkStudent homeworkStudent = homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id", homeworkClass.getHomeworkId()).eq("student_id", studentClass.getStudentId()));
+                    StudentVo2 studentVo = new StudentVo2();
+                    User student = userService.getById(studentClass.getStudentId());
+                    studentVo.setStudentId(student.getId());
+                    studentVo.setName(student.getName());
+                    studentVo.setLastLogin(student.getLastLogin());
+                    Homework homework = homeworkService.getById(homeworkClass.getHomeworkId());
+                    studentVo.setHomeworkId(homework.getId());
+                    studentVo.setHomeworkName(homework.getName());
+                    if(homeworkStudent.getCorrect()==0){
+                        studentVo.setStatus("已提交");
+                    }else if(homeworkStudent.getCorrect()==1){
+                        studentVo.setStatus("已批改");
+                    }
+                    students.add(studentVo);
+                }
+            }
+        }
+        return Result.success(students);
+    }
+
 }
