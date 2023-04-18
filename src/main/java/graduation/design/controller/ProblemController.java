@@ -40,12 +40,12 @@ public class ProblemController {
     HomeworkProblemService homeworkProblemService;
 
     @Authority({"admin","teacher","author"})
-    @ApiOperation("上传题目到题库,接口权限admin,author,teacher")
+    @ApiOperation("上传题目,uses字段为空则不会放到题库中,接口权限admin,author,teacher")
     @PostMapping("/add")
     public Result add(@RequestBody ProblemVo problemVo){
         Problem problem = new Problem();
         problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
-        if(problemVo.getUses()==null || problemVo.getUses().length==2 || problemVo.getUses().length==0){
+        if(problemVo.getUses().length==2){
             problem.setUses("练习及作业");
         }else if(problemVo.getUses().length==1){
             problem.setUses(problemVo.getUses()[0]);
@@ -69,7 +69,7 @@ public class ProblemController {
     public Result modify(@RequestBody ProblemVo problemVo){
         Problem problem = problemService.getById(problemVo.getId());
         problem.setContent(problemVo.getContent()).setAnswer(Arrays.toString(problemVo.getAnswer())).setType(problemVo.getType()).setDifficulty(problemVo.getDifficulty()).setDel(0).setOptions(Arrays.toString(problemVo.getOptions()));
-        if(problemVo.getUses()==null || problemVo.getUses().length==2 || problemVo.getUses().length==0){
+        if(problemVo.getUses().length==2){
             problem.setUses("练习及作业");
         }else if(problemVo.getUses().length==1){
             problem.setUses(problemVo.getUses()[0]);
@@ -111,16 +111,20 @@ public class ProblemController {
         }
         List<Problem> problems = new ArrayList<>();
         if(conditionVo.getUses()==null || conditionVo.getUses().length==0 || conditionVo.getUses().length==2){
-            problems = problems1;
+            for (Problem problem : problems1) {
+                if("作业".equals(problem.getUses()) || "练习及作业".equals(problem.getUses()) || "练习".equals(problem.getUses())){
+                    problems.add(problem);
+                }
+            }
         }else if(conditionVo.getUses()[0].equals("作业")){
             for (Problem problem : problems1) {
-                if("作业".equals(problem.getUses()) || "练习及作业".equals(problem.getUses()) || problem.getUses()==null){
+                if("作业".equals(problem.getUses()) || "练习及作业".equals(problem.getUses())){
                     problems.add(problem);
                 }
             }
         }else if(conditionVo.getUses()[0].equals("练习")){
             for (Problem problem : problems1) {
-                if("练习".equals(problem.getUses()) || "练习及作业".equals(problem.getUses()) || problem.getUses()==null){
+                if("练习".equals(problem.getUses()) || "练习及作业".equals(problem.getUses())){
                     problems.add(problem);
                 }
             }
@@ -132,7 +136,7 @@ public class ProblemController {
                 ProblemVo problemVo = new ProblemVo();
                 problemVo.setContent(problem.getContent());
                 problemVo.setId(problem.getId());
-                if(problem.getUses()==null || problem.getUses().equals("练习及作业")){
+                if(problem.getUses().equals("练习及作业")){
                     String[] uses = new String[2];
                     uses[0]="练习";
                     uses[1]="作业";
@@ -172,7 +176,7 @@ public class ProblemController {
                         ProblemVo problemVo = new ProblemVo();
                         problemVo.setContent(problem.getContent());
                         problemVo.setId(problem.getId());
-                        if(problem.getUses()==null || problem.getUses().equals("练习及作业")){
+                        if(problem.getUses().equals("练习及作业")){
                             String[] uses = new String[2];
                             uses[0]="练习";
                             uses[1]="作业";

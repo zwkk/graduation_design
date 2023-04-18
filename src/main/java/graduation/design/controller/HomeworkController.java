@@ -3,14 +3,12 @@ package graduation.design.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
 import graduation.design.entity.*;
-import graduation.design.entity.Class;
 import graduation.design.service.*;
 import graduation.design.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +74,7 @@ public class HomeworkController {
             if(homeworkProblemService.getOne(new QueryWrapper<HomeworkProblem>().eq("homework_id",homework.getId()).eq("problem_id",problemScore.getId()))!=null){
                 continue;
             }
-            if(problemService.getById(problemScore.getId()).getUses()!=null && problemService.getById(problemScore.getId()).getUses().equals("练习")){
+            if(problemService.getById(problemScore.getId()).getUses()==null || problemService.getById(problemScore.getId()).getUses().equals("练习")){
                 continue;
             }
             HomeworkProblem homeworkProblem = new HomeworkProblem();

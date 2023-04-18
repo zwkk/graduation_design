@@ -37,7 +37,7 @@ public class ProblemVo {
     @ApiModelProperty("填空题填空数,不用传")
     private Integer num;
 
-    @ApiModelProperty("练习/作业,为空的话默认练习及作业")
+    @ApiModelProperty("练习/作业,为空的话则不进入题库")
     private String[] uses;
 
 }
