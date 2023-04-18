@@ -772,9 +772,6 @@ public class HomeworkController {
                     if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
                         continue;
                     }
-                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
-                        continue;
-                    }
                     if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){
                         StudentVo2 studentVo = new StudentVo2();
                         User student = userService.getById(studentClass.getStudentId());
@@ -819,9 +816,6 @@ public class HomeworkController {
             for (StudentClass studentClass : studentClasses) {
                 for (HomeworkClass homeworkClass : homeworkClasses) {
                     if(homeworkId!=null && !homeworkClass.getHomeworkId().equals(homeworkId)){
-                        continue;
-                    }
-                    if(homeworkService.getById(homeworkClass.getHomeworkId()).getEnd().isBefore(LocalDateTime.now())){
                         continue;
                     }
                     if(homeworkStudentService.getOne(new QueryWrapper<HomeworkStudent>().eq("homework_id",homeworkClass.getHomeworkId()).eq("student_id",studentClass.getStudentId()))==null){

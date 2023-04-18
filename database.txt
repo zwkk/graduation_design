@@ -59,3 +59,8 @@ notice_student表:
     表名更改为notice_user
     字段student_id改名为user_id
     新增字段receive_time,类型datetime
+
+4.18
+progress表:
+    删除字段read
+    新增字段read_time，类型time

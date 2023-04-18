@@ -7,12 +7,12 @@
         <id column="id" property="id" />
         <result column="section_id" property="sectionId" />
         <result column="student_id" property="studentId" />
-        <result column="read" property="read" />
+        <result column="read_time" property="readTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, section_id, student_id, read
+        id, section_id, student_id, read_time
     </sql>
 
 </mapper>

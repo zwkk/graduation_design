@@ -5,6 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -40,9 +45,8 @@ public class Progress implements Serializable {
     @TableField("student_id")
     private Integer studentId;
 
-    @ApiModelProperty("是否阅读")
-    @TableField("read")
-    private Integer read;
-
+    @ApiModelProperty("阅读时长,如00:01:30")
+    @TableField("read_time")
+    private LocalTime readTime;
 
 }
