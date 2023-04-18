@@ -46,7 +46,7 @@ public class PracticeController {
         List<ProblemSection> problemSections = problemSectionService.list(new QueryWrapper<ProblemSection>().eq("section_id", sectionId));
         List<PracticeVo> practices = new ArrayList<>();
         for (ProblemSection problemSection : problemSections) {
-            if(problemService.getById(problemSection.getProblemId()).getUses()==null || problemService.getById(problemSection.getProblemId()).getUses().equals("作业")){
+            if(problemService.getById(problemSection.getProblemId()).getDel().equals(1) || problemService.getById(problemSection.getProblemId()).getUses()==null || problemService.getById(problemSection.getProblemId()).getUses().equals("作业")){
                 continue;
             }
             PracticeVo practiceVo = new PracticeVo();
