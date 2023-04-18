@@ -5,7 +5,9 @@ import graduation.design.annotation.Authority;
 import graduation.design.entity.*;
 import graduation.design.service.*;
 import graduation.design.vo.ChapterSectionVo;
+import graduation.design.vo.ChapterSectionVo2;
 import graduation.design.vo.Result;
+import graduation.design.vo.SectionVo2;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,9 @@ public class ChapterController {
 
     @Autowired
     SectionDetailService sectionDetailService;
+
+    @Autowired
+    ProgressService progressService;
 
     @Authority("admin")
     @ApiOperation("新增章,接口权限admin")
@@ -78,20 +83,55 @@ public class ChapterController {
         return Result.success(null);
     }
 
-    @ApiOperation(value = "获取章节目录,接口权限all",response = ChapterSectionVo.class)
+    @ApiOperation(value = "获取章节目录,若带userId则额外返回是否阅读,接口权限all",response = ChapterSectionVo.class)
     @GetMapping ("/getChapter")
-    public Result getChapter(){
-        List<ChapterSectionVo> chapterSectionVoList = new ArrayList<>();
-        List<Chapter> chapterList = chapterService.list();
-        for (Chapter chapter : chapterList) {
-            ChapterSectionVo chapterSectionVo = new ChapterSectionVo();
-            chapterSectionVo.setId(chapter.getId());
-            chapterSectionVo.setTitle(chapter.getTitle());
-            List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()).orderByAsc("section_order"));
-            chapterSectionVo.setSectionList(sectionList);
-            chapterSectionVoList.add(chapterSectionVo);
+    public Result getChapter(Integer userId){
+        if(userId==null){
+            List<ChapterSectionVo> chapterSectionVoList = new ArrayList<>();
+            List<Chapter> chapterList = chapterService.list();
+            for (Chapter chapter : chapterList) {
+                ChapterSectionVo chapterSectionVo = new ChapterSectionVo();
+                chapterSectionVo.setId(chapter.getId());
+                chapterSectionVo.setTitle(chapter.getTitle());
+                List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()).orderByAsc("section_order"));
+                chapterSectionVo.setSectionList(sectionList);
+                chapterSectionVoList.add(chapterSectionVo);
+            }
+            return Result.success(chapterSectionVoList);
+        }else {
+            List<ChapterSectionVo2> chapterSectionVoList = new ArrayList<>();
+            List<Chapter> chapterList = chapterService.list();
+            for (Chapter chapter : chapterList) {
+                ChapterSectionVo2 chapterSectionVo = new ChapterSectionVo2();
+                chapterSectionVo.setId(chapter.getId());
+                chapterSectionVo.setTitle(chapter.getTitle());
+                List<Section> sectionList = sectionService.list(new QueryWrapper<Section>().eq("chapter_id",chapter.getId()).orderByAsc("section_order"));
+                List<SectionVo2> sectionList2 = new ArrayList<>();
+                int readNum = 0;
+                for (Section section : sectionList) {
+                    SectionVo2 sectionVo2 = new SectionVo2();
+                    sectionVo2.setId(section.getId());
+                    sectionVo2.setChapterId(section.getChapterId());
+                    sectionVo2.setTitle(section.getTitle());
+                    sectionVo2.setSectionOrder(section.getSectionOrder());
+                    if(progressService.getOne(new QueryWrapper<Progress>().eq("section_id",section.getId()).eq("student_id",userId))!=null){
+                        sectionVo2.setRead(1);
+                        readNum++;
+                    }else {
+                        sectionVo2.setRead(0);
+                    }
+                    sectionList2.add(sectionVo2);
+                }
+                if(readNum==sectionList.size()){
+                    chapterSectionVo.setRead(1);
+                }else {
+                    chapterSectionVo.setRead(0);
+                }
+                chapterSectionVo.setSectionList(sectionList2);
+                chapterSectionVoList.add(chapterSectionVo);
+            }
+            return Result.success(chapterSectionVoList);
         }
-        return Result.success(chapterSectionVoList);
     }
 
 }
