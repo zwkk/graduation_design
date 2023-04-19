@@ -8,8 +8,11 @@ import lombok.Data;
 @ApiModel(description = "内容以及审核意见")
 public class ContentReasonVo {
 
-    @ApiModelProperty("内容")
-    private String content;
+    @ApiModelProperty("新版内容")
+    private String newContent;
+
+    @ApiModelProperty("旧版内容(如果有)")
+    private String oldContent;
 
     @ApiModelProperty("审核意见")
     private String reason;

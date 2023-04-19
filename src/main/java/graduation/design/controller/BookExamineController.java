@@ -73,8 +73,10 @@ public class BookExamineController {
     public Result list(Integer id){
         BookExamine bookExamine = bookExamineService.getById(id);
         ContentReasonVo contentReasonVo = new ContentReasonVo();
-        contentReasonVo.setContent(bookExamine.getContent());
+        contentReasonVo.setNewContent(bookExamine.getContent());
         contentReasonVo.setReason(bookExamine.getReason());
+        SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id", bookExamine.getSectionId()).orderByDesc("version").last("limit 1"));
+        contentReasonVo.setOldContent(detail.getContent());
         return Result.success(contentReasonVo);
     }
 
