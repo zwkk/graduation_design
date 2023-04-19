@@ -70,7 +70,11 @@ public class AdminController {
         User user = new User();
         user.setAccount(accountVo.getAccount());
         user.setPassword(accountVo.getPassword());
-        user.setName(accountVo.getName());
+        if(accountVo.getName()==null){
+            user.setName(accountVo.getAccount());
+        }else {
+            user.setName(accountVo.getName());
+        }
         user.setRoleList(Arrays.toString(accountVo.getAuthorizations()));
         userService.save(user);
         return Result.success("账号创建成功");

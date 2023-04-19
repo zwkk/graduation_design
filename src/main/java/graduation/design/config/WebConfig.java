@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/author/**","/authorSection/**","/bookExamine/**","/chapter/**","/section/**","/admin/**","/assistant/**","/class/**","/label/**","/student/**","/teacher/**","/toolComment/**","/tool/**","/problem/**","/homework/**","/practice/**","/notice/**","/question/**","/progress/**");
+                .addPathPatterns("/author/**","/authorSection/**","/bookExamine/**","/chapter/**","/section/**","/admin/**","/assistant/**","/class/**","/label/**","/student/**","/teacher/**","/toolComment/**","/tool/**","/problem/**","/homework/**","/practice/**","/notice/**","/question/**","/progress/**","/user/**");
     }
 
 }
