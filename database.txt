@@ -64,3 +64,7 @@ notice_student表:
 progress表:
     删除字段read
     新增字段read_time，类型time
+
+4.23
+problem表:
+    字段answer类型改为text
