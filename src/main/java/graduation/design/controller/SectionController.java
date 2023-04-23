@@ -43,6 +43,9 @@ public class SectionController {
     @Autowired
     BookExamineService bookExamineService;
 
+    @Autowired
+    ProblemSectionService problemSectionService;
+
     @Authority("admin")
     @ApiOperation("新增节,接口权限admin")
     @PostMapping("/addSection")
@@ -63,6 +66,7 @@ public class SectionController {
         authorSectionService.remove(new QueryWrapper<AuthorSection>().eq("section_id",id));
         bookExamineService.remove(new QueryWrapper<BookExamine>().eq("section_id",id));
         sectionDetailService.remove(new QueryWrapper<SectionDetail>().eq("section_id",id));
+        problemSectionService.remove(new QueryWrapper<ProblemSection>().eq("section_id",id));
         sectionService.removeById(id);
         return Result.success(null);
     }
