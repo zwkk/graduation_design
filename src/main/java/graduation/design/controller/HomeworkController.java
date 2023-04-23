@@ -196,6 +196,9 @@ public class HomeworkController {
             for (int i = 0; i < classes.size(); i++) {
                 homeworks2[i]=classes.get(i).getHomeworkId();
             }
+            if(homeworks2.length==0){
+                return Result.success(homeworks);
+            }
             List<Homework> homeworkList2 = homeworkService.list(new QueryWrapper<Homework>().in("id", homeworks2));
             List<Homework> homeworkList = new ArrayList<>();
             for (Homework homework : homeworkList2) {
@@ -249,6 +252,9 @@ public class HomeworkController {
             Integer[] homeworks2 = new Integer[classes.size()];
             for (int i = 0; i < classes.size(); i++) {
                 homeworks2[i]=classes.get(i).getHomeworkId();
+            }
+            if(homeworks2.length==0){
+                return Result.success(homeworks);
             }
             List<Homework> homeworkList2 = homeworkService.list(new QueryWrapper<Homework>().in("id", homeworks2));
             List<Homework> homeworkList = new ArrayList<>();
@@ -515,6 +521,9 @@ public class HomeworkController {
             for (int i = 0; i < classes.size(); i++) {
                 homeworks2[i]=classes.get(i).getHomeworkId();
             }
+            if(homeworks2.length==0){
+                return Result.success(problems);
+            }
             List<Homework> homeworkList2 = homeworkService.list(new QueryWrapper<Homework>().in("id", homeworks2));
             List<Homework> homeworkList = new ArrayList<>();
             for (Homework homework : homeworkList2) {
@@ -588,6 +597,9 @@ public class HomeworkController {
             Integer[] homeworks2 = new Integer[classes.size()];
             for (int i = 0; i < classes.size(); i++) {
                 homeworks2[i]=classes.get(i).getHomeworkId();
+            }
+            if(homeworks2.length==0){
+                return Result.success(problems);
             }
             List<Homework> homeworkList2 = homeworkService.list(new QueryWrapper<Homework>().in("id", homeworks2));
             List<Homework> homeworkList = new ArrayList<>();
