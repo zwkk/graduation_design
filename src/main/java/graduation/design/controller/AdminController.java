@@ -1,5 +1,6 @@
 package graduation.design.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import graduation.design.annotation.Authority;
 import graduation.design.entity.User;
 import graduation.design.service.UserService;
@@ -66,6 +67,9 @@ public class AdminController {
     public Result addAccount(@RequestBody AccountVo accountVo){
         if(accountVo.getAccount()==null || accountVo.getAccount().equals("") || accountVo.getPassword()==null || accountVo.getPassword().equals("")){
             return Result.fail("账号密码不能为空");
+        }
+        if(userService.getOne(new QueryWrapper<User>().eq("account",accountVo.getAccount()))!=null){
+            return Result.fail("该账号已存在");
         }
         User user = new User();
         user.setAccount(accountVo.getAccount());
