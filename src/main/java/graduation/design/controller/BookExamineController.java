@@ -76,7 +76,9 @@ public class BookExamineController {
         contentReasonVo.setNewContent(bookExamine.getContent());
         contentReasonVo.setReason(bookExamine.getReason());
         SectionDetail detail = sectionDetailService.getOne(new QueryWrapper<SectionDetail>().eq("section_id", bookExamine.getSectionId()).orderByDesc("version").last("limit 1"));
-        contentReasonVo.setOldContent(detail.getContent());
+        if(detail!=null){
+            contentReasonVo.setOldContent(detail.getContent());
+        }
         return Result.success(contentReasonVo);
     }
 
